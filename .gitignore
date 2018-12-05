@@ -1,0 +1,15 @@
+# Fichiers temporaires
+*~
+
+# Fichiers OSX inutiles
+**/*.DS_Store
+
+# Fichiers de sauvegarde OSX
+**/._*
+
+# Git merge files
+*.orig
+*_BACKUP_*
+*_REMOTE_*
+*_LOCAL_*
+*_BASE_*

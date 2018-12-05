@@ -54,10 +54,10 @@ where _np_ is the number of processors to be used during the installation.
 #### [How to cite original authors work](https://github.com/vincentcasseau/hyStrath/wiki/Publications#how-to-cite-our-work)  
 
 #### Latest journal article:  
-[*__hy2Foam__*] V. Casseau _et al._, 12/2016: [A Two-Temperature Open-Source CFD Model for Hypersonic Reacting Flows, Part Two: Multi-Dimensional Analysis](http://www.mdpi.com/2226-4310/3/4/45/html)  
+[*__dsmcFoam+__*] &nbsp; C. White _et al._, 03/2018: [dsmcFoam+: An OpenFOAM based direct simulation Monte Carlo solver](https://pure.strath.ac.uk/portal/files/81235392/White_etal_CPC_2017_an_OpenFOAM_based_direct_simulation_Monte_Carlo_solver.pdf)
 
 #### Latest conference paper:  
-[*__ARC__*] V. Renato _et al._, 09/2017: [Multi-dimensional Ablation and Thermal Response Program for Martian Entry
+[*__ARC__*] &nbsp; V. Renato _et al._, 09/2017: [Multi-dimensional Ablation and Thermal Response Program for Martian Entry
 Analysis](https://strathprints.strath.ac.uk/62926)  
 
 #### [View more](https://github.com/vincentcasseau/hyStrath/wiki/Publications)  
