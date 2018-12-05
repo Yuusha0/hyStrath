@@ -8,4 +8,4 @@ if [ $# -ne 0 ]
 fi
 
 ./resync-CFD.sh $nProcs
-./resync-DSMC.sh $nProcs
+#./resync-DSMC.sh $nProcs

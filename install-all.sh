@@ -8,4 +8,4 @@ if [ $# -ne 0 ]
 fi
 
 ./install-CFD.sh $nProcs
-./install-DSMC.sh $nProcs
+#./install-DSMC.sh $nProcs
