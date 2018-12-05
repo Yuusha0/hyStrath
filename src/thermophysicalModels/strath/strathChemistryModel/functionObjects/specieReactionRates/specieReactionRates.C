@@ -33,26 +33,26 @@ template<class ChemistryModelType>
 void Foam::functionObjects::specieReactionRates<ChemistryModelType>::
 writeFileHeader
 (
-    Ostream& os
-) const
+    const label i
+)
 {
-    writeHeader(os, "Specie reaction rates");
-    volRegion::writeFileHeader(*this, os);
-    writeHeaderValue(os, "nSpecie", chemistryModel_.nSpecie());
-    writeHeaderValue(os, "nReaction", chemistryModel_.nReaction());
+    writeHeader(file(), "Specie reaction rates");
+    volRegion::writeFileHeader(*this, file());
+    writeHeaderValue(file(), "nSpecie", chemistryModel_.nSpecie());
+    writeHeaderValue(file(), "nReaction", chemistryModel_.nReaction());
 
-    writeCommented(os, "Time");
-    writeTabbed(os, "Reaction");
+    writeCommented(file(), "Time");
+    writeTabbed(file(), "Reaction");
 
     const wordList& speciesNames =
         chemistryModel_.thermo().composition().species();
 
     forAll (speciesNames, si)
     {
-        writeTabbed(os, speciesNames[si]);
+        writeTabbed(file(), speciesNames[si]);
     }
 
-    os  << endl;
+    file()  << endl;
 }
 
 
@@ -69,7 +69,7 @@ specieReactionRates
 :
     fvMeshFunctionObject(name, runTime, dict),
     volRegion(fvMeshFunctionObject::mesh_, dict),
-    writeFile(obr_, name, typeName, dict),
+    logFiles(obr_, name),
     chemistryModel_
     (
         fvMeshFunctionObject::mesh_.lookupObject<ChemistryModelType>
@@ -78,7 +78,8 @@ specieReactionRates
         )
     )
 {
-    writeFileHeader(file());
+    // I'm not sure
+    writeFileHeader(0);
 }
 
 

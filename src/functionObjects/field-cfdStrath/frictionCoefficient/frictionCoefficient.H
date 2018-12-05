@@ -71,7 +71,8 @@ SourceFiles
 #define functionObjects_frictionCoefficient_H
 
 #include "fvMeshFunctionObject.H"
-#include "writeFile.H"
+#include "logFiles.H"
+#include "writeLocalObjects.H"
 #include "volFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -89,7 +90,8 @@ namespace functionObjects
 class frictionCoefficient
 :
     public fvMeshFunctionObject,
-    public writeFile
+    public logFiles,
+    public writeLocalObjects
 {
     // Private data
 
@@ -106,7 +108,7 @@ class frictionCoefficient
     // Private Member Functions
 
         //- File header information
-        virtual void writeFileHeader(Ostream& os) const;
+        virtual void writeFileHeader(const label i);
 
         //- Disallow default bitwise copy construct
         frictionCoefficient(const frictionCoefficient&);

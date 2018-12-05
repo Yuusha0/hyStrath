@@ -51,16 +51,16 @@ namespace functionObjects
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 void 
-Foam::functionObjects::pressureCoefficient::writeFileHeader(Ostream& os) const
+Foam::functionObjects::pressureCoefficient::writeFileHeader(const label i)
 {
-    writeHeader(os, "Cp ()");
+    writeHeader(file(), "Cp ()");
 
-    writeCommented(os, "Time");
-    writeTabbed(os, "patch");
-    writeTabbed(os, "min");
-    writeTabbed(os, "max");
-    writeTabbed(os, "average");
-    os << endl;
+    writeCommented(file(), "Time");
+    writeTabbed(file(), "patch");
+    writeTabbed(file(), "min");
+    writeTabbed(file(), "max");
+    writeTabbed(file(), "average");
+    file() << endl;
 }
 
 
@@ -74,12 +74,15 @@ Foam::functionObjects::pressureCoefficient::pressureCoefficient
 )
 :
     fvMeshFunctionObject(name, runTime, dict),
-    writeFile(obr_, name, typeName, dict),
+    logFiles(obr_, name),
+    writeLocalObjects(obr_, log),
     inflowPatchName_("inlet")
 {
     read(dict);
 
-    writeFileHeader(file());
+    // I'm not sure what I'm doing here
+    writeFileHeader(0);
+    resetLocalObjectName(typeName);
 
     volScalarField* pressureCoefficientPtr
     (
@@ -113,7 +116,7 @@ Foam::functionObjects::pressureCoefficient::~pressureCoefficient()
 bool Foam::functionObjects::pressureCoefficient::read(const dictionary& dict)
 {
     fvMeshFunctionObject::read(dict);
-    writeFile::read(dict);
+    writeLocalObjects::read(dict);
     
     inflowPatchName_ = dict.lookupOrDefault<word>("inflowPatchName", "inlet");
 

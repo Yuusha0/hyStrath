@@ -60,6 +60,8 @@ Description
 
 #include "mathematicalConstants.H"
 
+#include "IOdictionary.H"
+
 using namespace Foam;
 
 typedef line<point,point> linie;
@@ -372,18 +374,18 @@ void changeTypes(polyMesh &mesh,word wedge,word axis,bool hasOffset) {
     {
       const polyPatch& pp = patches[patchI];
 
-      if(pp.name()==axis && !hasOffset) {
-          Info << " Changing " << axis << " to symmetry" << endl;
+      /*if(pp.name()==axis && !hasOffset) {
+          Info << " Changing " << axis << " to symmetryPlane" << endl;
           newPatches[patchI] =
               polyPatch::New(
-                  "symmetry",
+                  "symmetryPlane",
                   pp.name(),
                   pp.size(),
                   pp.start(),
                   patchI,
                   patches
-              ).ptr();    
-      } else if(pp.name()==wedge+"_pos" || pp.name()==wedge+"_neg"){
+              ).ptr();
+      }*/ if(pp.name()==wedge+"_pos" || pp.name()==wedge+"_neg"){
           Info << " Changing " << pp.name() << " to wedge" << endl;
           newPatches[patchI] =
               polyPatch::New(

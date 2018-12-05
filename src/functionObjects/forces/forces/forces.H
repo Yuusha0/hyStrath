@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
-     \\/     M anipulation  | Copyright (C) 2015-2016 OpenCFD Ltd.
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+     \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -24,40 +24,22 @@ License
 Class
     Foam::functionObjects::forces
 
-Group
-    grpForcesFunctionObjects
-
 Description
     Calculates the forces and moments by integrating the pressure and
-    skin-friction forces over a given list of patches, and the resistance
-    from porous zones.
+    skin-friction forces over a given list of patches.
 
-    Forces and moments are calculated, with optional co-ordinate system and
-    writing of binned data, where force and moment contributions are collected
-    into a user-defined number of bins that span the input geometries for a
-    user-defined direction vector.
+    Member function forces::write() calculates the forces/moments and
+    writes the forces/moments into the file \<timeDir\>/forces.dat and bin
+    data (if selected) to the file \<timeDir\>/forces_bin.dat
 
-    Data is written into multiple files in the
-    postProcessing/\<functionObjectName\> directory:
-    - force.dat          : forces in global Cartesian co-ordinate system
-    - moment.dat         : moments in global Cartesian co-ordinate system
-    - forceBin.dat       : force bins in global Cartesian co-ordinate system
-    - momentBin.dat      : moment bins in global Cartesian co-ordinate system
-    - localForce.dat     : forces in local co-ordinate system
-    - localMoment.dat    : moments in local co-ordinate system
-    - localForceBin.dat  : force bins in local co-ordinate system
-    - localMomentBin.dat : moment bins in local co-ordinate system
-
-Usage
     Example of function object specification:
     \verbatim
     forces1
     {
         type        forces;
-        libs        ("libstrathforces.so");
+        libs        ("libforces.so");
         ...
         log         yes;
-        writeFields yes;
         patches     (walls);
 
         binData
@@ -69,18 +51,16 @@ Usage
     }
     \endverbatim
 
-    Where the entries comprise:
+Usage
     \table
         Property     | Description             | Required    | Default value
         type         | Type name: forces       | yes         |
         log          | Write force data to standard output | no | no
-        writeFields  | Write the force and moment fields | no | no
         patches      | Patches included in the forces calculation | yes |
         p            | Pressure field name     | no          | p
         U            | Velocity field name     | no          | U
         rho          | Density field name (see below) | no   | rho
         CofR         | Centre of rotation (see below) | no   |
-        porosity     | flag to include porosity contributions | no | no
         directForceDensity | Force density supplied directly (see below)|no|no
         fD           | Name of force density field (see below) | no | fD
     \endtable
@@ -119,8 +99,9 @@ Note
 See also
     Foam::functionObject
     Foam::functionObjects::fvMeshFunctionObject
-    Foam::functionObjects::writeFile
+    Foam::functionObjects::logFiles
     Foam::functionObjects::timeControl
+    Foam::forceCoeffs
 
 SourceFiles
     forces.C
@@ -131,13 +112,10 @@ SourceFiles
 #define functionObjects_forces_H
 
 #include "fvMeshFunctionObject.H"
-#include "writeFile.H"
+#include "logFiles.H"
 #include "coordinateSystem.H"
 #include "volFieldsFwd.H"
 #include "HashSet.H"
-#include "Tuple2.H"
-#include "OFstream.H"
-#include "Switch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -153,44 +131,25 @@ namespace functionObjects
 class forces
 :
     public fvMeshFunctionObject,
-    public writeFile
+    public logFiles
 {
 
 protected:
 
     // Protected data
 
+        //- Enumeration for ensuring the right file is accessed
+        enum fileID
+        {
+            MAIN_FILE = 0,
+            BINS_FILE = 1
+        };
+
         //- Pressure, viscous and porous force per bin
         List<Field<vector>> force_;
 
         //- Pressure, viscous and porous moment per bin
         List<Field<vector>> moment_;
-
-        // File streams
-
-            //- Forces
-            autoPtr<OFstream> forceFilePtr_;
-
-            //- Moments
-            autoPtr<OFstream> momentFilePtr_;
-
-            //- Force bins
-            autoPtr<OFstream> forceBinFilePtr_;
-
-            //- Moment bins
-            autoPtr<OFstream> momentBinFilePtr_;
-
-            //- Local force
-            autoPtr<OFstream> localForceFilePtr_;
-
-            //- Local moment
-            autoPtr<OFstream> localMomentFilePtr_;
-
-            //- Local force bins
-            autoPtr<OFstream> localForceBinFilePtr_;
-
-            //- Local moment bins
-            autoPtr<OFstream> localMomentBinFilePtr_;
 
 
         // Read from dictionary
@@ -219,7 +178,7 @@ protected:
             //- Reference pressure
             scalar pRef_;
 
-            //- Coordinate system used when evaluting forces/moments
+            //- Coordinate system used when evaluating forces/moments
             coordinateSystem coordSys_;
 
             //- Flag to indicate whether we are using a local co-ordinate sys
@@ -250,35 +209,20 @@ protected:
                 bool binCumulative_;
 
 
-            //- Write fields flag
-            bool writeFields_;
-
             //- Initialised flag
             bool initialised_;
 
 
     // Protected Member Functions
 
-        //- Create a field name
-        word fieldName(const word& name) const;
+        //- Create file names for forces and bins
+        wordList createFileNames(const dictionary& dict) const;
 
-        //- Create the output files
-        void createFiles();
-
-        //- Write header for integrated data
-        void writeIntegratedHeader(const word& header, Ostream& os) const;
-
-        //- Write header for binned data
-        void writeBinHeader(const word& header, Ostream& os) const;
+        //- Output file header information
+        virtual void writeFileHeader(const label i);
 
         //- Initialise the fields
         void initialise();
-
-        //- Initialise the collection bins
-        void initialiseBins();
-
-        //- Reset the fields prior to accumulation of force/moments
-        void resetFields();
 
         //- Return the effective viscous stress (laminar + turbulent).
         tmp<volSymmTensorField> devRhoReff() const;
@@ -303,47 +247,10 @@ protected:
             const vectorField& d
         );
 
-        //- Add patch contributions to force and moment fields
-        void addToFields
-        (
-            const label patchi,
-            const vectorField& Md,
-            const vectorField& fN,
-            const vectorField& fT,
-            const vectorField& fP
-        );
-
-        //- Add cell contributions to force and moment fields
-        void addToFields
-        (
-            const labelList& cellIDs,
-            const vectorField& Md,
-            const vectorField& fN,
-            const vectorField& fT,
-            const vectorField& fP
-        );
-
-        //- Helper function to write integrated forces and moments
-        void writeIntegratedForceMoment
-        (
-            const string& descriptor,
-            const vectorField& fm0,
-            const vectorField& fm1,
-            const vectorField& fm2,
-            autoPtr<OFstream>& osPtr
-        ) const;
-
-        //- Write force data
+        //- Helper function to write force data
         void writeForces();
 
-        //- Helper function to write binned forces and moments
-        void writeBinnedForceMoment
-        (
-            const List<Field<vector>>& fm,
-            autoPtr<OFstream>& osPtr
-        ) const;
-
-        //- Write binned data
+        //- Helper function to write bin data
         void writeBins();
 
         //- Disallow default bitwise copy construct
@@ -366,8 +273,7 @@ public:
         (
             const word& name,
             const Time& runTime,
-            const dictionary& dict,
-            const bool readFields = true
+            const dictionary& dict
         );
 
         //- Construct from objectRegistry and dictionary
@@ -375,8 +281,7 @@ public:
         (
             const word& name,
             const objectRegistry& obr,
-            const dictionary& dict,
-            const bool readFields = true
+            const dictionary&
         );
 
 

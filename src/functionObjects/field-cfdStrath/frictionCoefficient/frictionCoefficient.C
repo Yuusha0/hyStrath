@@ -50,16 +50,16 @@ namespace functionObjects
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::functionObjects::frictionCoefficient::writeFileHeader(Ostream& os) const
+void Foam::functionObjects::frictionCoefficient::writeFileHeader(const label i)
 {
-    writeHeader(os, "Cf ()");
+    writeHeader(file(), "Cf ()");
 
-    writeCommented(os, "Time");
-    writeTabbed(os, "patch");
-    writeTabbed(os, "min");
-    writeTabbed(os, "max");
-    writeTabbed(os, "average");
-    os << endl;
+    writeCommented(file(), "Time");
+    writeTabbed(file(), "patch");
+    writeTabbed(file(), "min");
+    writeTabbed(file(), "max");
+    writeTabbed(file(), "average");
+    file() << endl;
 }
 
 
@@ -73,7 +73,8 @@ Foam::functionObjects::frictionCoefficient::frictionCoefficient
 )
 :
     fvMeshFunctionObject(name, runTime, dict),
-    writeFile(obr_, name, typeName, dict),
+    logFiles(obr_, name),
+    writeLocalObjects(obr_, log),
     wallShearStress_("wallShearStress"),
     inflowPatchName_("inlet"),
     wallShearStressHeader_
@@ -86,7 +87,9 @@ Foam::functionObjects::frictionCoefficient::frictionCoefficient
 {
     read(dict);
 
-    writeFileHeader(file());
+    // I'm not sure it's the good thing to do
+    writeFileHeader(0);
+    resetLocalObjectName(typeName);
 
     volScalarField* frictionCoefficientPtr
     (
@@ -136,7 +139,7 @@ Foam::functionObjects::frictionCoefficient::~frictionCoefficient()
 bool Foam::functionObjects::frictionCoefficient::read(const dictionary& dict)
 {
     fvMeshFunctionObject::read(dict);
-    writeFile::read(dict);
+    writeLocalObjects::read(dict);
     
     wallShearStress_ = 
         dict.lookupOrDefault<word>("wallShearStress", "wallShearStress");

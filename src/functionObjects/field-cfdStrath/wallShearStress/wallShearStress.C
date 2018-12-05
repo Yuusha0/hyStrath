@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -45,37 +45,54 @@ namespace functionObjects
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
-void Foam::functionObjects::wallShearStress::writeFileHeader(Ostream& os) const
+void Foam::functionObjects::wallShearStress::writeFileHeader(const label i)
 {
     // Add headers to output data
-    writeHeader(os, "Wall shear stress");
-    writeCommented(os, "Time");
-    writeTabbed(os, "patch");
-    writeTabbed(os, "min");
-    writeTabbed(os, "max");
-    os << endl;
+    writeHeader(file(), "Wall shear stress");
+    writeCommented(file(), "Time");
+    writeTabbed(file(), "patch");
+    writeTabbed(file(), "min");
+    writeTabbed(file(), "max");
+    file() << endl;
 }
 
 
-void Foam::functionObjects::wallShearStress::calcShearStress
+Foam::tmp<Foam::volVectorField>
+Foam::functionObjects::wallShearStress::calcShearStress
 (
-    const volSymmTensorField& Reff,
-    volVectorField& shearStress
+    const volSymmTensorField& Reff
 )
 {
-    shearStress.dimensions().reset(Reff.dimensions());
+    tmp<volVectorField> twallShearStress
+    (
+        new volVectorField
+        (
+            IOobject
+            (
+                type(),
+                mesh_.time().timeName(),
+                mesh_
+            ),
+            mesh_,
+            dimensionedVector("0", Reff.dimensions(), Zero)
+        )
+    );
+
+    volVectorField::Boundary& wallShearStressBf =
+        twallShearStress.ref().boundaryFieldRef();
 
     forAllConstIter(labelHashSet, patchSet_, iter)
     {
         label patchi = iter.key();
 
-        vectorField& ssp = shearStress.boundaryFieldRef()[patchi];
         const vectorField& Sfp = mesh_.Sf().boundaryField()[patchi];
         const scalarField& magSfp = mesh_.magSf().boundaryField()[patchi];
         const symmTensorField& Reffp = Reff.boundaryField()[patchi];
 
-        ssp = (-Sfp/magSfp) & Reffp;
+        wallShearStressBf[patchi] = (-Sfp/magSfp) & Reffp;
     }
+
+    return twallShearStress;
 }
 
 
@@ -89,36 +106,13 @@ Foam::functionObjects::wallShearStress::wallShearStress
 )
 :
     fvMeshFunctionObject(name, runTime, dict),
-    writeFile(mesh_, name, typeName, dict),
+    logFiles(obr_, name),
+    writeLocalObjects(obr_, log),
     patchSet_()
 {
     read(dict);
-
-    writeFileHeader(file());
-
-    volVectorField* wallShearStressPtr
-    (
-        new volVectorField
-        (
-            IOobject
-            (
-                typeName,
-                mesh_.time().timeName(),
-                mesh_,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            mesh_,
-            dimensionedVector
-            (
-                "0",
-                sqr(dimLength)/sqr(dimTime),
-                Zero
-            )
-        )
-    );
-
-    mesh_.objectRegistry::store(wallShearStressPtr);
+    resetName(typeName);
+    resetLocalObjectName(typeName);
 }
 
 
@@ -133,7 +127,7 @@ Foam::functionObjects::wallShearStress::~wallShearStress()
 bool Foam::functionObjects::wallShearStress::read(const dictionary& dict)
 {
     fvMeshFunctionObject::read(dict);
-    writeFile::read(dict);
+    writeLocalObjects::read(dict);
 
     const polyBoundaryMesh& pbm = mesh_.boundaryMesh();
 
@@ -191,12 +185,6 @@ bool Foam::functionObjects::wallShearStress::execute()
     typedef compressible::turbulenceModel cmpModel;
     typedef incompressible::turbulenceModel icoModel;
 
-    volVectorField& wallShearStress =
-        const_cast<volVectorField&>
-        (
-            mesh_.lookupObject<volVectorField>(type())
-        );
-
     tmp<volSymmTensorField> Reff;
     if (mesh_.foundObject<cmpModel>(turbulenceModel::propertiesName))
     {
@@ -219,21 +207,22 @@ bool Foam::functionObjects::wallShearStress::execute()
             << "database" << exit(FatalError);
     }
 
-    calcShearStress(Reff(), wallShearStress);
+    word name(type());
 
-    return true;
+    return store(name, calcShearStress(Reff));
 }
 
 
 bool Foam::functionObjects::wallShearStress::write()
 {
+    Log << type() << " " << name() << " write:" << nl;
+
+    writeLocalObjects::write();
+
+    logFiles::write();
+
     const volVectorField& wallShearStress =
         obr_.lookupObject<volVectorField>(type());
-
-    Log << type() << " " << name() << " write:" << nl
-        << "    writing field " << wallShearStress.name() << endl;
-
-    wallShearStress.write();
 
     const fvPatchList& patches = mesh_.boundary();
 
@@ -250,15 +239,17 @@ bool Foam::functionObjects::wallShearStress::write()
         if (Pstream::master())
         {
             file() << mesh_.time().value()
-                << token::TAB << pp.name()
-                << token::TAB << minSsp
-                << token::TAB << maxSsp
+                << tab << pp.name()
+                << tab << minSsp
+                << tab << maxSsp
                 << endl;
         }
 
         Log << "    min/max(" << pp.name() << ") = "
             << minSsp << ", " << maxSsp << endl;
     }
+
+    Log << endl;
 
     return true;
 }

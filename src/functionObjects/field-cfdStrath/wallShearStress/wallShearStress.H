@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
-     \\/     M anipulation  | Copyright (C) 2015-2016 OpenCFD Ltd.
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+     \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -24,9 +24,6 @@ License
 Class
     Foam::functionObjects::wallShearStress
 
-Group
-    grpForcesFunctionObjects
-
 Description
     Calculates and write the shear-stress at wall patches as
     the volVectorField field 'wallShearStress'.
@@ -45,31 +42,33 @@ Description
     model.  All wall patches are included by default; to restrict the
     calculation to certain patches, use the optional 'patches' entry.
 
-Usage
     Example of function object specification:
     \verbatim
     wallShearStress1
     {
         type        wallShearStress;
-        libs        ("libstrathFieldFunctionObjects.so");
+        libs        ("libfieldFunctionObjects.so");
         ...
         patches     (".*Wall");
     }
     \endverbatim
 
-    Where the entries comprise:
+Usage
     \table
-        Property | Description                | Required   | Default value
+        Property | Description               | Required    | Default value
         type     | type name: wallShearStress | yes        |
-        resultName | Name of wall shear stress field | no  | \<function name\>
         patches  | list of patches to process | no         | all wall patches
-        log      | Log to standard output     | no         | yes
     \endtable
+
+Note
+    Writing field 'wallShearStress' is done by default, but it can be overridden
+    by defining an empty \c objects list. For details see writeLocalObjects.
 
 See also
     Foam::functionObject
     Foam::functionObjects::fvMeshFunctionObject
-    Foam::functionObjects::writeFile
+    Foam::functionObjects::logFiles
+    Foam::functionObjects::writeLocalObjects
     Foam::functionObjects::timeControl
 
 SourceFiles
@@ -81,7 +80,8 @@ SourceFiles
 #define functionObjects_wallShearStress_H
 
 #include "fvMeshFunctionObject.H"
-#include "writeFile.H"
+#include "logFiles.H"
+#include "writeLocalObjects.H"
 #include "volFieldsFwd.H"
 #include "HashSet.H"
 
@@ -99,7 +99,8 @@ namespace functionObjects
 class wallShearStress
 :
     public fvMeshFunctionObject,
-    public writeFile
+    public logFiles,
+    public writeLocalObjects
 {
 
 protected:
@@ -113,13 +114,12 @@ protected:
     // Protected Member Functions
 
         //- File header information
-        virtual void writeFileHeader(Ostream& os) const;
+        virtual void writeFileHeader(const label i);
 
         //- Calculate the shear-stress
-        void calcShearStress
+        tmp<volVectorField> calcShearStress
         (
-            const volSymmTensorField& Reff,
-            volVectorField& shearStress
+            const volSymmTensorField& Reff
         );
 
 

@@ -70,7 +70,8 @@ SourceFiles
 #define functionObjects_pressureCoefficient_H
 
 #include "fvMeshFunctionObject.H"
-#include "writeFile.H"
+#include "logFiles.H"
+#include "writeLocalObjects.H"
 #include "volFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -88,7 +89,8 @@ namespace functionObjects
 class pressureCoefficient
 :
     public fvMeshFunctionObject,
-    public writeFile
+    public logFiles,
+    public writeLocalObjects
 {
     // Private data
 
@@ -99,7 +101,7 @@ class pressureCoefficient
     // Private Member Functions
 
         //- File header information
-        virtual void writeFileHeader(Ostream& os) const;
+        virtual void writeFileHeader(const label i);
 
         //- Disallow default bitwise copy construct
         pressureCoefficient(const pressureCoefficient&);

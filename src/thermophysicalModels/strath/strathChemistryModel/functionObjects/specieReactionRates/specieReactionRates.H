@@ -46,7 +46,7 @@ SourceFiles
 
 #include "fvMeshFunctionObject.H"
 #include "volRegion.H"
-#include "writeFile.H"
+#include "logFiles.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -64,7 +64,7 @@ class specieReactionRates
 :
     public fvMeshFunctionObject,
     public volRegion,
-    public writeFile
+    public logFiles
 {
     // Private Member Data
 
@@ -74,7 +74,7 @@ class specieReactionRates
     // Private Member Functions
 
         //- File header information
-        virtual void writeFileHeader(Ostream& os) const;
+        virtual void writeFileHeader(const label i);
 
         //- Disallow default bitwise copy construct
         specieReactionRates(const specieReactionRates&);

@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
-     \\/     M anipulation  | Copyright (C) 2016 OpenCFD Ltd.
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+     \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -24,7 +24,6 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "yPlus.H"
-#include "volFields.H"
 #include "turbulenceModel.H"
 #include "nutWallFunctionFvPatchScalarField.H"
 #include "wallFvPatch.H"
@@ -50,16 +49,81 @@ namespace functionObjects
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::functionObjects::yPlus::writeFileHeader(Ostream& os) const
+void Foam::functionObjects::yPlus::writeFileHeader(const label i)
 {
-    writeHeader(os, "y+ ()");
+    writeHeader(file(), "y+ ()");
 
-    writeCommented(os, "Time");
-    writeTabbed(os, "patch");
-    writeTabbed(os, "min");
-    writeTabbed(os, "max");
-    writeTabbed(os, "average");
-    os << endl;
+    writeCommented(file(), "Time");
+    writeTabbed(file(), "patch");
+    writeTabbed(file(), "min");
+    writeTabbed(file(), "max");
+    writeTabbed(file(), "average");
+    file() << endl;
+}
+
+
+Foam::tmp<Foam::volScalarField> Foam::functionObjects::yPlus::calcYPlus
+(
+    const turbulenceModel& turbModel
+)
+{
+    tmp<volScalarField> tyPlus
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                type(),
+                mesh_.time().timeName(),
+                mesh_
+            ),
+            mesh_,
+            dimensionedScalar("0", dimless, 0.0)
+        )
+    );
+
+    volScalarField::Boundary& yPlusBf = tyPlus.ref().boundaryFieldRef();
+
+    volScalarField::Boundary d = nearWallDist(mesh_).y();
+
+    const volScalarField::Boundary nutBf =
+        turbModel.nut()().boundaryField();
+
+    const volScalarField::Boundary nuEffBf =
+        turbModel.nuEff()().boundaryField();
+
+    const volScalarField::Boundary nuBf =
+        turbModel.nu()().boundaryField();
+
+    const fvPatchList& patches = mesh_.boundary();
+
+    forAll(patches, patchi)
+    {
+        const fvPatch& patch = patches[patchi];
+
+        if (isA<nutWallFunctionFvPatchScalarField>(nutBf[patchi]))
+        {
+            const nutWallFunctionFvPatchScalarField& nutPf =
+                dynamic_cast<const nutWallFunctionFvPatchScalarField&>
+                (
+                    nutBf[patchi]
+                );
+
+            yPlusBf[patchi] = nutPf.yPlus();
+        }
+        else if (isA<wallFvPatch>(patch))
+        {
+            yPlusBf[patchi] =
+                d[patchi]
+               *sqrt
+                (
+                    nuEffBf[patchi]
+                   *mag(turbModel.U().boundaryField()[patchi].snGrad())
+                )/nuBf[patchi];
+        }
+    }
+
+    return tyPlus;
 }
 
 
@@ -73,30 +137,12 @@ Foam::functionObjects::yPlus::yPlus
 )
 :
     fvMeshFunctionObject(name, runTime, dict),
-    writeFile(obr_, name, typeName, dict)
+    logFiles(obr_, name),
+    writeLocalObjects(obr_, log)
 {
     read(dict);
-
-    writeFileHeader(file());
-
-    volScalarField* yPlusPtr
-    (
-        new volScalarField
-        (
-            IOobject
-            (
-                typeName,
-                mesh_.time().timeName(),
-                mesh_,
-                IOobject::NO_READ,
-                IOobject::AUTO_WRITE
-            ),
-            mesh_,
-            dimensionedScalar("0", dimless, 0.0)
-        )
-    );
-
-    mesh_.objectRegistry::store(yPlusPtr);
+    resetName(typeName);
+    resetLocalObjectName(typeName);
 }
 
 
@@ -111,7 +157,7 @@ Foam::functionObjects::yPlus::~yPlus()
 bool Foam::functionObjects::yPlus::read(const dictionary& dict)
 {
     fvMeshFunctionObject::read(dict);
-    writeFile::read(dict);
+    writeLocalObjects::read(dict);
 
     return true;
 }
@@ -119,66 +165,22 @@ bool Foam::functionObjects::yPlus::read(const dictionary& dict)
 
 bool Foam::functionObjects::yPlus::execute()
 {
-    volScalarField& yPlus =
-        const_cast<volScalarField&>
+    if (mesh_.foundObject<turbulenceModel>(turbulenceModel::propertiesName))
+    {
+        const turbulenceModel& model = mesh_.lookupObject<turbulenceModel>
         (
-            lookupObject<volScalarField>(typeName)
+            turbulenceModel::propertiesName
         );
 
-    if (foundObject<turbulenceModel>(turbulenceModel::propertiesName))
-    {
-        volScalarField::Boundary& yPlusBf = yPlus.boundaryFieldRef();
+        word name(type());
 
-        const turbulenceModel& model =
-            lookupObject<turbulenceModel>
-            (
-                turbulenceModel::propertiesName
-            );
-
-        const nearWallDist nwd(mesh_);
-        const volScalarField::Boundary& d = nwd.y();
-
-        // nut needed for wall function patches
-        tmp<volScalarField> tnut = model.nut();
-        const volScalarField::Boundary& nutBf = tnut().boundaryField();
-
-        // U needed for plain wall patches
-        const volVectorField::Boundary& UBf = model.U().boundaryField();
-
-        const fvPatchList& patches = mesh_.boundary();
-
-        forAll(patches, patchi)
-        {
-            const fvPatch& patch = patches[patchi];
-
-            if (isA<nutWallFunctionFvPatchScalarField>(nutBf[patchi]))
-            {
-                const nutWallFunctionFvPatchScalarField& nutPf =
-                    dynamic_cast<const nutWallFunctionFvPatchScalarField&>
-                    (
-                        nutBf[patchi]
-                    );
-
-                yPlusBf[patchi] = nutPf.yPlus();
-            }
-            else if (isA<wallFvPatch>(patch))
-            {
-                yPlusBf[patchi] =
-                    d[patchi]
-                   *sqrt
-                    (
-                        model.nuEff(patchi)
-                       *mag(UBf[patchi].snGrad())
-                    )/model.nu(patchi);
-            }
-        }
+        return store(name, calcYPlus(model));
     }
     else
     {
-        WarningInFunction
+        FatalErrorInFunction
             << "Unable to find turbulence model in the "
-            << "database: yPlus will not be calculated" << endl;
-        return false;
+            << "database" << exit(FatalError);
     }
 
     return true;
@@ -187,13 +189,14 @@ bool Foam::functionObjects::yPlus::execute()
 
 bool Foam::functionObjects::yPlus::write()
 {
+    Log << type() << " " << name() << " write:" << nl;
+
+    writeLocalObjects::write();
+
+    logFiles::write();
+
     const volScalarField& yPlus =
-        obr_.lookupObject<volScalarField>(type());
-
-    Log << type() << " " << name() << " write:" << nl
-        << "    writing field " << yPlus.name() << endl;
-
-    yPlus.write();
+        mesh_.lookupObject<volScalarField>(type());
 
     const volScalarField::Boundary& yPlusBf = yPlus.boundaryField();
     const fvPatchList& patches = mesh_.boundary();
@@ -218,14 +221,16 @@ bool Foam::functionObjects::yPlus::write()
 
                 writeTime(file());
                 file()
-                    << token::TAB << patch.name()
-                    << token::TAB << minYplus
-                    << token::TAB << maxYplus
-                    << token::TAB << avgYplus
+                    << tab << patch.name()
+                    << tab << minYplus
+                    << tab << maxYplus
+                    << tab << avgYplus
                     << endl;
             }
         }
     }
+
+    Log << endl;
 
     return true;
 }

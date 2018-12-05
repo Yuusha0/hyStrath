@@ -50,16 +50,16 @@ namespace functionObjects
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::functionObjects::StantonNo::writeFileHeader(Ostream& os) const
+void Foam::functionObjects::StantonNo::writeFileHeader(const label i)
 {
-    writeHeader(os, "St ()");
+    writeHeader(file(), "St ()");
 
-    writeCommented(os, "Time");
-    writeTabbed(os, "patch");
-    writeTabbed(os, "min");
-    writeTabbed(os, "max");
-    writeTabbed(os, "average");
-    os << endl;
+    writeCommented(file(), "Time");
+    writeTabbed(file(), "patch");
+    writeTabbed(file(), "min");
+    writeTabbed(file(), "max");
+    writeTabbed(file(), "average");
+    file() << endl;
 }
 
 
@@ -73,7 +73,8 @@ Foam::functionObjects::StantonNo::StantonNo
 )
 :
     fvMeshFunctionObject(name, runTime, dict),
-    writeFile(obr_, name, typeName, dict),
+    logFiles(obr_, name),
+    writeLocalObjects(obr_, log),
     wallHeatFlux_("wallHeatFlux"),
     inflowPatchName_("inlet"),
     wallHeatFluxHeader_
@@ -86,7 +87,9 @@ Foam::functionObjects::StantonNo::StantonNo
 {
     read(dict);
 
-    writeFileHeader(file());
+    // I'm not sure what I'm doing here
+    writeFileHeader(0);
+    resetLocalObjectName(typeName);
 
     volScalarField* StantonNoPtr
     (
@@ -136,7 +139,7 @@ Foam::functionObjects::StantonNo::~StantonNo()
 bool Foam::functionObjects::StantonNo::read(const dictionary& dict)
 {
     fvMeshFunctionObject::read(dict);
-    writeFile::read(dict);
+    writeLocalObjects::read(dict);
     
     wallHeatFlux_ = dict.lookupOrDefault<word>("wallHeatFlux", "wallHeatFlux");
         

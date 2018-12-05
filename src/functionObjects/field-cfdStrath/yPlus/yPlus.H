@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2013-2016 OpenFOAM Foundation
-     \\/     M anipulation  | Copyright (C) 2015-2016 OpenCFD Ltd.
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2013-2018 OpenFOAM Foundation
+     \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -24,39 +24,35 @@ License
 Class
     Foam::functionObjects::yPlus
 
-Group
-    grpFieldFunctionObjects
-
 Description
-    Evaluates and outputs turbulence y+ for turbulence models.
+    Evaluates and outputs turbulence y+ for models. Values written to
+    time directories as field 'yPlus'.
 
-    The field is stored on the mesh database so that it can be
-    retrieved and used for other applications.
-
-Usage
-    Example of function object specification to calculate the y+ (LES):
+    Example of function object specification:
     \verbatim
     yPlus1
     {
         type        yPlus;
-        libs        ("libstrathFieldFunctionObjects.so");
+        libs        ("libfieldFunctionObjects.so");
         ...
     }
     \endverbatim
 
-    Where the entries comprise:
+Usage
     \table
-        Property     | Description             | Required    | Default value
-        type         | Type name: yPlus        | yes         |
-        result       | Name of y+ field        | no          | \<function name\>
-        log          | Log to standard output  | no          | yes
+        Property | Description                | Required   | Default value
+        type     | type name: yPlus           | yes        |
     \endtable
 
+Note
+    Writing field 'yPlus' is done by default, but it can be overridden by
+    defining an empty \c objects list. For details see writeLocalObjects.
 
 See also
     Foam::functionObject
     Foam::functionObjects::fvMeshFunctionObject
-    Foam::functionObjects::writeFile
+    Foam::functionObjects::logFiles
+    Foam::functionObjects::writeLocalObjects
     Foam::functionObjects::timeControl
 
 SourceFiles
@@ -68,7 +64,8 @@ SourceFiles
 #define functionObjects_yPlus_H
 
 #include "fvMeshFunctionObject.H"
-#include "writeFile.H"
+#include "logFiles.H"
+#include "writeLocalObjects.H"
 #include "volFieldsFwd.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -76,22 +73,32 @@ SourceFiles
 namespace Foam
 {
 
+// Forward declaration of classes
+class turbulenceModel;
+
 namespace functionObjects
 {
 
 /*---------------------------------------------------------------------------*\
-                            Class yPlus Declaration
+                          Class yPlus Declaration
 \*---------------------------------------------------------------------------*/
 
 class yPlus
 :
     public fvMeshFunctionObject,
-    public writeFile
+    public logFiles,
+    public writeLocalObjects
 {
     // Private Member Functions
 
         //- File header information
-        virtual void writeFileHeader(Ostream& os) const;
+        virtual void writeFileHeader(const label i);
+
+        //- Calculate y+
+        tmp<volScalarField> calcYPlus
+        (
+            const turbulenceModel& turbModel
+        );
 
         //- Disallow default bitwise copy construct
         yPlus(const yPlus&);

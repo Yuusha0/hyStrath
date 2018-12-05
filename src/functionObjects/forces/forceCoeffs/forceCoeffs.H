@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
-     \\/     M anipulation  | Copyright (C) 2015 OpenCFD Ltd.
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
+     \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -24,37 +24,19 @@ License
 Class
     Foam::functionObjects::forceCoeffs
 
-Group
-    grpForcesFunctionObjects
-
 Description
     Extends the forces functionObject by providing lift, drag and moment
     coefficients.  The data can optionally be output into bins, defined in a
     given direction.
 
-    The binned data provides the total and consitituent components per bin:
-    - total coefficient
-    - pressure coefficient contribution
-    - viscous coefficient contribution
-    - porous coefficient contribution
-
-    Data is written into multiple files in the
-    postProcessing/\<functionObjectName\> directory:
-    - coefficient.dat   : integrated coefficients over all geometries
-    - CmBin.dat         : moment coefficient bins
-    - CdBin.dat         : drag coefficient bins
-    - ClBin.dat         : lift coefficient bins
-
-Usage
     Example of function object specification:
     \verbatim
     forceCoeffs1
     {
         type        forceCoeffs;
-        libs        ("libstrathforces.so");
+        libs        ("libforces.so");
         ...
         log         yes;
-        writeFields yes;
         patches     (walls);
         liftDir     (0 1 0);
         dragDir     (-1 0 0);
@@ -72,20 +54,18 @@ Usage
     }
     \endverbatim
 
-    Where the entries comprise:
+Usage
     \table
         Property     | Description             | Required    | Default value
-        type         | Type name: forces       | yes         |
-        log          | Write force data to standard output | no | no
-        writeFields  | Write the force and moment coefficient fields | no | no
-        patches      | Patches included in the forces calculation | yes |
-        liftDir      | Lift direction          | yes         |
-        dragDir      | Drag direction          | yes         |
-        pitchAxis    | Picth axis              | yes         |
-        magUInf      | Free stream velocity magnitude | yes  |
-        lRef         | Reference length scale for moment calculations | yes |
-        Aref         | Reference area          | yes |
-        porosity     | Flag to include porosity contributions | no | no
+        type         | type name: forceCoeffs  | yes         |
+        log          | write force data to standard output | no | no
+        patches      | patches included in the forces calculation | yes |
+        liftDir      | lift direction          | yes         |
+        dragDir      | drag direction          | yes         |
+        pitchAxis    | picth axis              | yes         |
+        magUInf      | free stream velocity magnitude | yes  |
+        lRef         | reference length scale for moment calculations | yes |
+        Aref         | reference area          | yes |
     \endtable
 
     Bin data is optional, but if the dictionary is present, the entries must
@@ -155,21 +135,6 @@ class forceCoeffs
             scalar Aref_;
 
 
-        // File streams
-
-            //- Integrated coefficients
-            autoPtr<OFstream> coeffFilePtr_;
-
-            //- Moment coefficient
-            autoPtr<OFstream> CmBinFilePtr_;
-
-            //- Drag coefficient
-            autoPtr<OFstream> CdBinFilePtr_;
-
-            //- Lift coefficient
-            autoPtr<OFstream> ClBinFilePtr_;
-
-
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
@@ -181,26 +146,8 @@ class forceCoeffs
 
 protected:
 
-    // Protected Member Functions
-
-        //- Create the output files
-        void createFiles();
-
-        //- Write header for integrated data
-        void writeIntegratedHeader(const word& header, Ostream& os) const;
-
-        //- Write header for binned data
-        void writeBinHeader(const word& header, Ostream& os) const;
-
-        //- Write integrated data
-        void writeIntegratedData
-        (
-            const word& title,
-            const List<Field<scalar>>& coeff
-        ) const;
-
-        //- Write binned data
-        void writeBinData(const List<Field<scalar>> coeffs, Ostream& os) const;
+    //- Output file header information
+    virtual void writeFileHeader(const label i);
 
 
 public:
