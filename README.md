@@ -1,4 +1,4 @@
-# hyStrath
+# hyStrath for OpenFOAM-v6
 
 #### Hypersonic / Rarefied gas dynamics code developments released under license GPL-3.0 
 #### The only platform to conjointly host open-source CFD and DSMC codes designed for atmospheric re-entry analysis
@@ -6,9 +6,6 @@
 #### Includes:
 + *hyFoam* CFD solver (supersonic combusting flows)  
 + *hy2Foam* CFD solver (hypersonic reacting flows)  
-+ **Coming soon: _ARC_**, a low computationally demanding 3-D Ablative Response Code  
-+ *dsmcFoam+* code (direct simulation Monte Carlo)  
-+ **Coming soon: _hyperFoam_**, a hybrid CFD-DSMC solver   
 
 #### Please visit the [_hyStrath_ Wiki page](https://github.com/vincentcasseau/hyStrath/wiki)  
 
@@ -17,25 +14,29 @@
 ---  
 ## Compatibility, Maintenance, Installation and Sync
 
-### Master branch  
+### OpenFOAM-6 branch
 
 #### Compatibility  
-+ OF-v1706: https://www.openfoam.com/releases/openfoam-v1706 
++ OF-v6: https://openfoam.org/release/6/
++ OF-v5: https://openfoam.org/release/5-0/
 
 #### Installation  
 ```sh
-git clone https://github.com/vincentcasseau/hyStrath.git --branch master --single-branch && cd hyStrath/  
-./install-all.sh 8 > logInstall 2>&1 &
+git clone https://github.com/Yuusha0/hyStrath.git --branch OpenFOAM-6 --single-branch && cd hyStrath/  
+./install-all.sh np > logInstall 2>&1 &
 ```  
 
-where _8_ is the number of processors to be used during the installation.  
+where _np_ is the number of processors to be used during the installation.  
 
 #### [View more](https://github.com/vincentcasseau/hyStrath/wiki/Compatibility,-Maintenance,-Installation-and-Sync)  
 
 <br><br>
 
 ---  
-## Release history  
+## Release history
+#### 5 Dec 2018: OpenFOAM-6 branch for CFD
++ New branch with CFD module compiling on OpenFOAM-6 and OpenFOAM-5
+
 #### 29 Aug 2018: 'Concordia' release, Master branch  
 + Master branch ported to OpenFOAM v1706   
 + Minor DSMC corrections  
@@ -50,7 +51,7 @@ where _8_ is the number of processors to be used during the installation.
 
 ## Publications
 
-#### [How to cite our work](https://github.com/vincentcasseau/hyStrath/wiki/Publications#how-to-cite-our-work)  
+#### [How to cite original authors work](https://github.com/vincentcasseau/hyStrath/wiki/Publications#how-to-cite-our-work)  
 
 #### Latest journal article:  
 [*__hy2Foam__*] V. Casseau _et al._, 12/2016: [A Two-Temperature Open-Source CFD Model for Hypersonic Reacting Flows, Part Two: Multi-Dimensional Analysis](http://www.mdpi.com/2226-4310/3/4/45/html)  
@@ -66,7 +67,7 @@ Analysis](https://strathprints.strath.ac.uk/62926)
 
 ---  
 
-## People & Contact
+## People & Contact for original hyStrath
 
 __GitHub coordinator:__ Dr Vincent Casseau  
 
