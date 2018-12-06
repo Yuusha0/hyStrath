@@ -555,7 +555,7 @@ Foam::functionObjects::forces::forces
     rhoName_(word::null),
     directForceDensity_(false),
     fDName_(""),
-    rhoRef_(vGreat),
+    rhoRef_(VGREAT),
     pRef_(0),
     coordSys_(),
     localSystem_(false),
@@ -563,7 +563,7 @@ Foam::functionObjects::forces::forces
     nBin_(1),
     binDir_(Zero),
     binDx_(0.0),
-    binMin_(great),
+    binMin_(GREAT),
     binPoints_(),
     binCumulative_(true),
     initialised_(false)
@@ -590,7 +590,7 @@ Foam::functionObjects::forces::forces
     rhoName_(word::null),
     directForceDensity_(false),
     fDName_(""),
-    rhoRef_(vGreat),
+    rhoRef_(VGREAT),
     pRef_(0),
     coordSys_(),
     localSystem_(false),
@@ -598,7 +598,7 @@ Foam::functionObjects::forces::forces
     nBin_(1),
     binDir_(Zero),
     binDx_(0.0),
-    binMin_(great),
+    binMin_(GREAT),
     binPoints_(),
     binCumulative_(true),
     initialised_(false)
@@ -698,8 +698,8 @@ bool Foam::functionObjects::forces::read(const dictionary& dict)
             binDict.lookup("direction") >> binDir_;
             binDir_ /= mag(binDir_);
 
-            binMin_ = great;
-            scalar binMax = -great;
+            binMin_ = GREAT;
+            scalar binMax = -GREAT;
             forAllConstIter(labelHashSet, patchSet_, iter)
             {
                 label patchi = iter.key();
