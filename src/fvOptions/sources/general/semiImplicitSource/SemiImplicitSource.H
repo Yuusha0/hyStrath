@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -24,9 +24,6 @@ License
 Class
     Foam::fv::SemiImplicitSource
 
-Group
-    grpFvOptionsSources
-
 Description
     Semi-implicit source, described using an input dictionary.  The injection
     rate coefficients are specified as pairs of Su-Sp coefficients, i.e.
@@ -45,14 +42,11 @@ Description
     Example of the source specification:
 
     \verbatim
-    <Type>SemiImplicitSourceCoeffs
+    volumeMode      absolute; // specific
+    injectionRateSuSp
     {
-        volumeMode      absolute; // specific
-        injectionRateSuSp
-        {
-            k           (30.7 0);
-            epsilon     (1.5  0);
-        }
+        k           (30.7 0);
+        epsilon     (1.5  0);
     }
     \endverbatim
 

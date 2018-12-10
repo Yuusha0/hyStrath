@@ -23,16 +23,30 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "makeFvOption.H"
-#include "SemiImplicitSource.H"
+#ifndef makeFvOption_H
+#define makeFvOption_H
+
+#include "fvOption.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-makeFvOption(SemiImplicitSource, scalar);
-makeFvOption(SemiImplicitSource, vector);
-makeFvOption(SemiImplicitSource, sphericalTensor);
-makeFvOption(SemiImplicitSource, symmTensor);
-makeFvOption(SemiImplicitSource, tensor);
+#define makeFvOption(Option, Type)                                             \
+                                                                               \
+    defineTemplateTypeNameAndDebugWithName                                     \
+    (                                                                          \
+        Foam::fv::Option<Foam::Type>,                                          \
+        #Type#Option,                                                          \
+        0                                                                      \
+    );                                                                         \
+                                                                               \
+    Foam::fv::option::adddictionaryConstructorToTable                          \
+        <Foam::fv::Option<Foam::Type>>                                         \
+        add##Option##Type##dictionary##ConstructorTooptionTable_
 
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#endif
 
 // ************************************************************************* //

@@ -23,16 +23,42 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "makeFvOption.H"
-#include "SemiImplicitSource.H"
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+inline const Foam::word& Foam::fv::option::name() const
+{
+    return name_;
+}
 
-makeFvOption(SemiImplicitSource, scalar);
-makeFvOption(SemiImplicitSource, vector);
-makeFvOption(SemiImplicitSource, sphericalTensor);
-makeFvOption(SemiImplicitSource, symmTensor);
-makeFvOption(SemiImplicitSource, tensor);
+
+inline const Foam::fvMesh& Foam::fv::option::mesh() const
+{
+    return mesh_;
+}
+
+
+inline const Foam::dictionary& Foam::fv::option::coeffs() const
+{
+    return coeffs_;
+}
+
+
+inline bool Foam::fv::option::active() const
+{
+    return active_;
+}
+
+
+inline void Foam::fv::option::setApplied(const label fieldi)
+{
+    applied_[fieldi] = true;
+}
+
+
+inline Foam::Switch& Foam::fv::option::active()
+{
+    return active_;
+}
 
 
 // ************************************************************************* //

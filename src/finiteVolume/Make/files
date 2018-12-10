@@ -1,7 +1,13 @@
 fvPatchFields = fields/fvPatchFields
 derivedFvPatchFields = $(fvPatchFields)/derived
+fvOptions = cfdTools/general/fvOptions
 
 $(derivedFvPatchFields)/rampInlet/rampInletFvPatchFields.C
 $(derivedFvPatchFields)/nonCatalytic/nonCatalyticFvPatchFields.C
+
+$(fvOptions)/fvOption.C
+$(fvOptions)/fvOptionIO.C
+$(fvOptions)/fvOptionList.C
+$(fvOptions)/fvOptions.C
 
 LIB = $(FOAM_USER_LIBBIN)/libstrathFiniteVolume

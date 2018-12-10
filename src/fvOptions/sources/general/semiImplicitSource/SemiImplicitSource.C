@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
-   \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2016 OpenFOAM Foundation
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -203,7 +203,53 @@ void Foam::fv::SemiImplicitSource<Type>::addSup
             << ">::addSup for source " << name_ << endl;
     }
 
-    return this->addSup(eqn, fieldi);
+    const GeometricField<Type, fvPatchField, volMesh>& psi = eqn.psi();
+
+    typename GeometricField<Type, fvPatchField, volMesh>::Internal Su
+    (
+        IOobject
+        (
+            name_ + fieldNames_[fieldi] + "Su",
+            mesh_.time().timeName(),
+            mesh_,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh_,
+        dimensioned<Type>
+        (
+            "zero",
+            eqn.dimensions()/(dimVolume*dimDensity),
+            Zero
+        ),
+        false
+    );
+
+    UIndirectList<Type>(Su, cells_) = injectionRate_[fieldi].first()/VDash_;
+
+    volScalarField::Internal Sp
+    (
+        IOobject
+        (
+            name_ + fieldNames_[fieldi] + "Sp",
+            mesh_.time().timeName(),
+            mesh_,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh_,
+        dimensioned<scalar>
+        (
+            "zero",
+            Su.dimensions()/psi.dimensions(),
+            0.0
+        ),
+        false
+    );
+
+    UIndirectList<scalar>(Sp, cells_) = injectionRate_[fieldi].second()/VDash_;
+
+    eqn += Su*rho() + fvm::SuSp(Sp*rho(), psi);
 }
 
 
