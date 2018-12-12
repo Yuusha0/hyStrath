@@ -42,6 +42,14 @@ cp -r $currentDir/run $sendingDir/
 
 
 # compile new libraries -------------------------------------------------------
+cd $sendingDir/src/fvOptions
+wclean
+wmakeLnInclude .
+
+cd $sendingDir/src/finiteVolume
+wclean libso
+wmake -j$nProcs libso
+
 cd $sendingDir/src/thermophysicalModels/strath/
 wclean all
 ./Allwmake -j$nProcs
@@ -57,19 +65,16 @@ cd $sendingDir/src/hTCModels
 wclean libso
 wmake -j$nProcs libso
 
-cd $sendingDir/src/finiteVolume
-wclean libso
-wmake -j$nProcs libso
-
 cd $sendingDir/src/functionObjects/forces
 wclean libso
+
 cd $sendingDir/src/functionObjects/field-cfdStrath
 wclean libso
+
 cd $sendingDir/src/functionObjects
 ./Allwmake-cfdStrath -j$nProcs
 
 cd $sendingDir/src/fvOptions
-wclean libso
 wmake -j$nProcs libso
 
 

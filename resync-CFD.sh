@@ -14,6 +14,14 @@ fi
 
 
 # synchronize folders and compile new libraries -------------------------------
+rsync -rtvuc $currentDir/src/fvOptions/ $sendingDir/src/fvOptions/
+cd $sendingDir/src/fvOptions
+wmakeLnInclude -update .
+
+rsync -rtvuc $currentDir/src/finiteVolume/ $sendingDir/src/finiteVolume/
+cd $sendingDir/src/finiteVolume
+wmake -j$nProcs libso
+
 rsync -rtvuc $currentDir/src/thermophysicalModels/strath/ $sendingDir/src/thermophysicalModels/strath/
 cd $sendingDir/src/thermophysicalModels/strath/
 ./Allwmake -j$nProcs
@@ -27,10 +35,6 @@ cd $sendingDir/src/thermophysicalModels/strath/
 
 rsync -rtvuc $currentDir/src/hTCModels/ $sendingDir/src/hTCModels/
 cd $sendingDir/src/hTCModels
-wmake -j$nProcs libso
-
-rsync -rtvuc $currentDir/src/finiteVolume/ $sendingDir/src/finiteVolume/
-cd $sendingDir/src/finiteVolume
 wmake -j$nProcs libso
 
 rsync -rtvuc $currentDir/src/functionObjects/forces $sendingDir/src/functionObjects/forces
