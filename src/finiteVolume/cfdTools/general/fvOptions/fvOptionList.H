@@ -3,7 +3,7 @@
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
     \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
-     \\/     M anipulation  |
+     \\/     M anipulation  | Copyright (C) 2018 Yuusha
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -139,6 +139,21 @@ public:
             template<class Type>
             tmp<fvMatrix<Type>> operator()
             (
+                GeometricField<Type, fvPatchField, volMesh>& field
+            );
+
+            //- Return source for equation with specified name
+            template<class Type>
+            tmp<fvMatrix<Type>> operator()
+            (
+                GeometricField<Type, fvPatchField, volMesh>& field,
+                const word& fieldName
+            );
+
+            //- Return source for equation
+            template<class Type>
+            tmp<fvMatrix<Type>> operator()
+            (
                 const volScalarField& rho,
                 GeometricField<Type, fvPatchField, volMesh>& field
             );
@@ -150,6 +165,25 @@ public:
                 const volScalarField& rho,
                 GeometricField<Type, fvPatchField, volMesh>& field,
                 const word& fieldName
+            );
+
+            //- Return source for equation
+            template<class Type>
+            tmp<fvMatrix<Type>> operator()
+            (
+		const Switch rhoEq,
+                GeometricField<Type, fvPatchField, volMesh>& field,
+		const volScalarField& rho
+            );
+
+            //- Return source for equation with specified name
+            template<class Type>
+            tmp<fvMatrix<Type>> operator()
+            (
+		const Switch rhoEq,
+                GeometricField<Type, fvPatchField, volMesh>& field,
+                const word& fieldName,
+		const volScalarField& rho
             );
 
             //- Return source for equation

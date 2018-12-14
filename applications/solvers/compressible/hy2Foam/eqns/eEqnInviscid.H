@@ -11,19 +11,25 @@ surfaceScalarField sigmaDotU
   & aByU
 );
 
-solve
+fvScalarMatrix EEqn
 (
     fvm::ddt(rhoE)
   + fvc::div(phiEp)
   - fvc::div(sigmaDotU)
  ==
     reaction->Sh()
-); 
+  + fvOptions(true,rhoE,rho)
+);
+
+fvOptions.constrain(EEqn);
+
+EEqn.solve();
 
 e = rhoE/rho - 0.5*magSqr(U);
 
 et.ref() = e() - ev();
 et.correctBoundaryConditions();
+fvOptions.correct(rhoE);
 e.boundaryFieldRef() = et.boundaryField() + ev.boundaryField();
 
 rhoE.boundaryFieldRef() = rho.boundaryField()*(e.boundaryField() + 0.5*magSqr(U.boundaryField()));

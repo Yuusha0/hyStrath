@@ -10,6 +10,7 @@ interRegionOption/interRegionOptionIO.C
 generalSources=sources/general
 $(generalSources)/codedSource/codedSource.C
 $(generalSources)/semiImplicitSource/semiImplicitSource.C
+$(generalSources)/semiImplicitRhoSource/semiImplicitRhoSource.C
 
 derivedSources=sources/derived
 $(derivedSources)/acousticDampingSource/acousticDampingSource.C

@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
     #include "createMesh.H"
+    #include "createFvOptions.H"
     
     scalar currentIterationTime = 0.0;
     scalar previousIterationTime = 1.0;

@@ -3,7 +3,7 @@
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
     \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
-     \\/     M anipulation  |
+     \\/     M anipulation  | Copyright (C) 2018 Yuusha
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -68,6 +68,27 @@ Foam::tmp<Foam::fvMatrix<Type>> Foam::fv::optionList::source
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type>> Foam::fv::optionList::operator()
 (
+    GeometricField<Type, fvPatchField, volMesh>& field
+)
+{
+    return this->operator()(field, field.name());
+}
+
+
+template<class Type>
+Foam::tmp<Foam::fvMatrix<Type>> Foam::fv::optionList::operator()
+(
+    GeometricField<Type, fvPatchField, volMesh>& field,
+    const word& fieldName
+)
+{
+    return source(field, fieldName, field.dimensions()/dimTime*dimVolume);
+}
+
+
+template<class Type>
+Foam::tmp<Foam::fvMatrix<Type>> Foam::fv::optionList::operator()
+(
     const volScalarField& rho,
     GeometricField<Type, fvPatchField, volMesh>& field
 )
@@ -113,6 +134,71 @@ Foam::tmp<Foam::fvMatrix<Type>> Foam::fv::optionList::operator()
                 }
 
                 source.addSup(rho, mtx, fieldi);
+            }
+        }
+    }
+
+    return tmtx;
+}
+
+
+template<class Type>
+Foam::tmp<Foam::fvMatrix<Type>> Foam::fv::optionList::operator()
+(
+    const Switch rhoEq,
+    GeometricField<Type, fvPatchField, volMesh>& field,
+    const volScalarField& rho
+)
+{
+    return this->operator()(rhoEq, field, field.name(), rho);
+}
+
+
+template<class Type>
+Foam::tmp<Foam::fvMatrix<Type>> Foam::fv::optionList::operator()
+(
+    const Switch rhoEq,
+    GeometricField<Type, fvPatchField, volMesh>& field,
+    const word& fieldName,
+    const volScalarField& rho
+)
+{
+    checkApplied();
+
+    if (rhoEq == false)
+    {
+       FatalErrorInFunction
+	   << "This function must be called for rhoX fields only"
+	   << abort(FatalError);
+    }
+
+    const dimensionSet ds
+    (
+        field.dimensions()/dimTime*dimVolume
+    );
+
+    tmp<fvMatrix<Type>> tmtx(new fvMatrix<Type>(field, ds));
+    fvMatrix<Type>& mtx = tmtx.ref();
+
+    forAll(*this, i)
+    {
+        option& source = this->operator[](i);
+
+        label fieldi = source.applyToField(fieldName);
+
+        if (fieldi != -1)
+        {
+            source.setApplied(fieldi);
+
+            if (source.isActive())
+            {
+                if (debug)
+                {
+                    Info<< "Applying source " << source.name() << " to field "
+                        << fieldName << endl;
+                }
+
+                source.addSup(rhoEq, mtx, fieldi, rho);
             }
         }
     }

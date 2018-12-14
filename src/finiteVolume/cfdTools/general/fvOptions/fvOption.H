@@ -3,7 +3,7 @@
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
     \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
-     \\/     M anipulation  |
+     \\/     M anipulation  | Copyright (C) 2018 Yuusha
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -226,7 +226,40 @@ public:
         // Evaluation
 
 
-            // Explicit and implicit sources for compressible equations
+            // Explicit and implicit sources
+
+                virtual void addSup
+                (
+                    fvMatrix<scalar>& eqn,
+                    const label fieldi
+                );
+
+                virtual void addSup
+                (
+                    fvMatrix<vector>& eqn,
+                    const label fieldi
+                );
+
+                virtual void addSup
+                (
+                    fvMatrix<symmTensor>& eqn,
+                    const label fieldi
+                );
+
+                virtual void addSup
+                (
+                    fvMatrix<sphericalTensor>& eqn,
+                    const label fieldi
+                );
+
+                virtual void addSup
+                (
+                    fvMatrix<tensor>& eqn,
+                    const label fieldi
+                );
+
+
+             // Explicit and implicit sources for compressible equations
 
                 virtual void addSup
                 (
@@ -261,6 +294,49 @@ public:
                     const volScalarField& rho,
                     fvMatrix<tensor>& eqn,
                     const label fieldi
+                );
+
+
+             // Explicit and implicit sources for rhoCentralFoam based solver
+
+                virtual void addSup
+                (
+		    const Switch rhoEq,
+                    fvMatrix<scalar>& eqn,
+                    const label fieldi,
+		    const volScalarField& rho
+                );
+
+                virtual void addSup
+                (
+		    const Switch rhoEq,
+                    fvMatrix<vector>& eqn,
+                    const label fieldi,
+		    const volScalarField& rho
+                );
+
+                virtual void addSup
+                (
+		    const Switch rhoEq,
+                    fvMatrix<symmTensor>& eqn,
+                    const label fieldi,
+		    const volScalarField& rho
+                );
+
+                virtual void addSup
+                (
+		    const Switch rhoEq,
+                    fvMatrix<sphericalTensor>& eqn,
+                    const label fieldi,
+		    const volScalarField& rho
+                );
+
+                virtual void addSup
+                (
+		    const Switch rhoEq,
+                    fvMatrix<tensor>& eqn,
+                    const label fieldi,
+		    const volScalarField& rho
                 );
 
 

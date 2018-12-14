@@ -3,7 +3,7 @@
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     | Website:  https://openfoam.org
     \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
-     \\/     M anipulation  |
+     \\/     M anipulation  | Copyright (C) 2018 Yuusha
 -------------------------------------------------------------------------------
 License
     This file is part of OpenFOAM.
@@ -132,6 +132,46 @@ void Foam::fv::option::checkApplied() const
 
 void Foam::fv::option::addSup
 (
+    fvMatrix<scalar>& eqn,
+    const label fieldi
+)
+{}
+
+
+void Foam::fv::option::addSup
+(
+    fvMatrix<vector>& eqn,
+    const label fieldi
+)
+{}
+
+
+void Foam::fv::option::addSup
+(
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldi
+)
+{}
+
+
+void Foam::fv::option::addSup
+(
+    fvMatrix<symmTensor>& eqn,
+    const label fieldi
+)
+{}
+
+
+void Foam::fv::option::addSup
+(
+    fvMatrix<tensor>& eqn,
+    const label fieldi
+)
+{}
+
+
+void Foam::fv::option::addSup
+(
     const volScalarField& rho,
     fvMatrix<scalar>& eqn,
     const label fieldi
@@ -171,6 +211,56 @@ void Foam::fv::option::addSup
     const volScalarField& rho,
     fvMatrix<tensor>& eqn,
     const label fieldi
+)
+{}
+
+
+void Foam::fv::option::addSup
+(
+    const Switch rhoEq,
+    fvMatrix<scalar>& eqn,
+    const label fieldi,
+    const volScalarField& rho
+)
+{}
+
+
+void Foam::fv::option::addSup
+(
+    const Switch rhoEq,
+    fvMatrix<vector>& eqn,
+    const label fieldi,
+    const volScalarField& rho
+)
+{}
+
+
+void Foam::fv::option::addSup
+(
+    const Switch rhoEq,
+    fvMatrix<sphericalTensor>& eqn,
+    const label fieldi,
+    const volScalarField& rho
+)
+{}
+
+
+void Foam::fv::option::addSup
+(
+    const Switch rhoEq,
+    fvMatrix<symmTensor>& eqn,
+    const label fieldi,
+    const volScalarField& rho
+)
+{}
+
+
+void Foam::fv::option::addSup
+(
+    const Switch rhoEq,
+    fvMatrix<tensor>& eqn,
+    const label fieldi,
+    const volScalarField& rho
 )
 {}
 
