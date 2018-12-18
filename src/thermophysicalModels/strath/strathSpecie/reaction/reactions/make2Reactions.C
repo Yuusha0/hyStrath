@@ -104,6 +104,9 @@ namespace Foam
     makeReactions(demPLEGasHThermoPhysicsH2TGD, demPLEGasHReactionH2TGD);
     
     makeReactions(demCEAGasHThermoPhysicsH2TGD, demCEAGasHReactionH2TGD);
+
+    makeReactions(tabularHThermoPhysics, tabularHReaction)
+    makeReactions(tabularEThermoPhysics, tabularEReaction)
     
     // sensible internal energy based reactions
     makeReactions(demConstGasEThermoPhysicsH2TGD, demConstGasEReactionH2TGD);

@@ -35,6 +35,10 @@ Description
 #include "thermoPhysics2Types.H"
 #include "Reaction2.H"
 
+#include "tabularEOS.H"
+#include "hTabularThermo.H"
+#include "tabularTransport.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -51,6 +55,8 @@ namespace Foam
     
     typedef Reaction2<demCEAGasHThermoPhysicsH2TGD> demCEAGasHReactionH2TGD;
 
+    typedef Reaction2<tabularHThermoPhysics> tabularHReaction;
+
     // internal energy based reactions
     
     typedef Reaction2<demConstGasEThermoPhysicsH2TGD> demConstGasEReactionH2TGD;
@@ -62,6 +68,8 @@ namespace Foam
     typedef Reaction2<demPLEGasEThermoPhysicsH2TGD> demPLEGasEReactionH2TGD;
     
     typedef Reaction2<demCEAGasEThermoPhysicsH2TGD> demCEAGasEReactionH2TGD;
+
+    typedef Reaction2<tabularEThermoPhysics> tabularEReaction;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

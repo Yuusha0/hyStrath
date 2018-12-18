@@ -54,6 +54,10 @@ Description
 #include "hPolynomialThermo.H"
 #include "icoPolynomial.H"
 
+#include "tabularTransport.H"
+#include "hTabularThermo.H"
+#include "tabularEOS.H"
+
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

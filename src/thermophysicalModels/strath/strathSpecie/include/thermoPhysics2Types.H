@@ -46,6 +46,10 @@ Description
 #include "powerLawEuckenTransport.H"
 #include "CEATransport.H"
 
+#include "tabularEOS.H"
+#include "hTabularThermo.H"
+#include "tabularTransport.H"
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -64,7 +68,7 @@ namespace Foam
             sensible2Enthalpy
         >
     > demConstGasHThermoPhysicsH2TGD;
-    
+
     typedef
     SutherlandEuckenTransport
     <
@@ -116,6 +120,19 @@ namespace Foam
             sensible2Enthalpy
         >
     > demCEAGasHThermoPhysicsH2TGD;
+
+    typedef
+    tabularTransport
+    <
+        species::multiThermo
+        <
+            hTabularThermo
+            <
+                tabularEOS<advancedSpecie>
+            >,
+            sensible2Enthalpy
+        >
+    > tabularHThermoPhysics;
 
     // thermo physics types based on sensibleInternalEnergy
     
@@ -183,6 +200,19 @@ namespace Foam
             sensible2InternalEnergy
         >
     > demCEAGasEThermoPhysicsH2TGD;
+
+    typedef
+    tabularTransport
+    <
+        species::multiThermo
+        <
+            hTabularThermo
+            <
+                tabularEOS<advancedSpecie>
+            >,
+            sensible2InternalEnergy
+        >
+    > tabularEThermoPhysics;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -14,6 +14,10 @@ fi
 
 
 # synchronize folders and compile new libraries -------------------------------
+rsync -rtvuc $currentDir/src/OpenFOAM/ $sendingDir/src/OpenFOAM/
+cd $sendingDir/src/OpenFOAM
+wmakeLnInclude -update .
+
 rsync -rtvuc $currentDir/src/fvOptions/ $sendingDir/src/fvOptions/
 cd $sendingDir/src/fvOptions
 wmakeLnInclude -update .
