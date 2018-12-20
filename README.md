@@ -34,6 +34,11 @@ where _np_ is the number of processors to be used during the installation.
 
 ---  
 ## Release history
+#### 20 Dec 2018: New equilibrium chemistry and source term for Plasma
+Jet simulations
++ Add source term for energy equation
++ Add BETA feature: equilibrium chemistry with tables for mixing gas
+
 #### 5 Dec 2018: OpenFOAM-6 branch for CFD
 + New branch with CFD module compiling on OpenFOAM-6 and OpenFOAM-5
 
