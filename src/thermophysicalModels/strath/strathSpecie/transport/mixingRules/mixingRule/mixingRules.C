@@ -67,6 +67,11 @@ makeMixingRule(molarMR, demCEAGasHThermoPhysicsH2TGD);
 makeMixingRule(WilkeMR, demCEAGasHThermoPhysicsH2TGD);
 makeMixingRule(ArmalySuttonMR, demCEAGasHThermoPhysicsH2TGD);
 
+makeMixingRule(molarMR, tabularHThermoPhysics);
+//makeMixingRule(GuptaMR, demCEAGasHThermoPhysicsH2TGD);
+makeMixingRule(WilkeMR, tabularHThermoPhysics);
+makeMixingRule(ArmalySuttonMR, tabularHThermoPhysics);
+
 
 // Based on sensible internal energy
 
@@ -94,6 +99,11 @@ makeMixingRule(molarMR, demCEAGasEThermoPhysicsH2TGD);
 //makeMixingRule(GuptaMR, demCEAGasEThermoPhysicsH2TGD);
 makeMixingRule(WilkeMR, demCEAGasEThermoPhysicsH2TGD);
 makeMixingRule(ArmalySuttonMR, demCEAGasEThermoPhysicsH2TGD);
+
+makeMixingRule(molarMR, tabularEThermoPhysics);
+//makeMixingRule(GuptaMR, demCEAGasEThermoPhysicsH2TGD);
+makeMixingRule(WilkeMR, tabularEThermoPhysics);
+makeMixingRule(ArmalySuttonMR, tabularEThermoPhysics);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

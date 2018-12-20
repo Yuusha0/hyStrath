@@ -49,6 +49,8 @@ makeRarefactionParameter(rarefied, demPLEGasHThermoPhysicsH2TGD);
 
 makeRarefactionParameter(rarefied, demCEAGasHThermoPhysicsH2TGD);
 
+makeRarefactionParameter(rarefied, tabularHThermoPhysics);
+
 // Based on sensible internal energy
 
 makeRarefactionParameter(rarefied, demConstGasEThermoPhysicsH2TGD);
@@ -60,6 +62,8 @@ makeRarefactionParameter(rarefied, demBEGasEThermoPhysicsH2TGD);
 makeRarefactionParameter(rarefied, demPLEGasEThermoPhysicsH2TGD);
 
 makeRarefactionParameter(rarefied, demCEAGasEThermoPhysicsH2TGD);
+
+makeRarefactionParameter(rarefied, tabularEThermoPhysics);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

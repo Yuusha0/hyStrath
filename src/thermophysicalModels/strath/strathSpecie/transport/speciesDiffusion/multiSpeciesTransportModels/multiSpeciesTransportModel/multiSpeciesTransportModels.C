@@ -73,6 +73,12 @@ makeMultiSpeciesTransportModel(SCEBD, demCEAGasHThermoPhysicsH2TGD);
 makeMultiSpeciesTransportModel(LewisNumber, demCEAGasHThermoPhysicsH2TGD);
 makeMultiSpeciesTransportModel(modifiedLewisNumber, demCEAGasHThermoPhysicsH2TGD);
 
+makeMultiSpeciesTransportModel(noSpeciesDiffusion, tabularHThermoPhysics);
+makeMultiSpeciesTransportModel(Fick, tabularHThermoPhysics);
+makeMultiSpeciesTransportModel(SCEBD, tabularHThermoPhysics);
+makeMultiSpeciesTransportModel(LewisNumber, tabularHThermoPhysics);
+makeMultiSpeciesTransportModel(modifiedLewisNumber, tabularHThermoPhysics);
+
 // Based on sensible internal energy
 
 makeMultiSpeciesTransportModel(noSpeciesDiffusion, demConstGasEThermoPhysicsH2TGD);
@@ -104,6 +110,12 @@ makeMultiSpeciesTransportModel(Fick, demCEAGasEThermoPhysicsH2TGD);
 makeMultiSpeciesTransportModel(SCEBD, demCEAGasEThermoPhysicsH2TGD);
 makeMultiSpeciesTransportModel(LewisNumber, demCEAGasEThermoPhysicsH2TGD);
 makeMultiSpeciesTransportModel(modifiedLewisNumber, demCEAGasEThermoPhysicsH2TGD);
+
+makeMultiSpeciesTransportModel(noSpeciesDiffusion, tabularEThermoPhysics);
+makeMultiSpeciesTransportModel(Fick, tabularEThermoPhysics);
+makeMultiSpeciesTransportModel(SCEBD, tabularEThermoPhysics);
+makeMultiSpeciesTransportModel(LewisNumber, tabularEThermoPhysics);
+makeMultiSpeciesTransportModel(modifiedLewisNumber, tabularEThermoPhysics);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

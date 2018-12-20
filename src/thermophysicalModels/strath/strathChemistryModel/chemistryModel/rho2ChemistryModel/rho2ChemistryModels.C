@@ -76,6 +76,13 @@ namespace Foam
         rho2ChemistryModel,
         demCEAGasHThermoPhysicsH2TGD
     );
+
+    make2ChemistryModel
+    (
+        chemistry2Model,
+        rho2ChemistryModel,
+	tabularHThermoPhysics
+    );
     
     // Chemistry moldels based on sensibleInternalEnergy
     make2ChemistryModel
@@ -112,7 +119,13 @@ namespace Foam
         rho2ChemistryModel,
         demCEAGasEThermoPhysicsH2TGD
     );     
-          
+
+    make2ChemistryModel
+    (
+        chemistry2Model,
+        rho2ChemistryModel,
+	tabularEThermoPhysics
+    );
 }
 
 // ************************************************************************* //

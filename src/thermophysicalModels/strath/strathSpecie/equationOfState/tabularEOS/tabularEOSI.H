@@ -88,36 +88,36 @@ inline Foam::scalar Foam::tabularEOS<Specie>::rho
     return densityTable(T, p);
 }
 
-// Totally not sure of what I am doing here...
-template<class Specie>
-inline Foam::scalar Foam::tabularEOS<Specie>::H
-(
-    scalar p,
-    scalar T
-) const
-{
-    return 0.;
-}
+// DELETED FOR HYFOAM **********************************************************
+// template<class Specie>
+// inline Foam::scalar Foam::tabularEOS<Specie>::H
+// (
+//     scalar p,
+//     scalar T
+// ) const
+// {
+//     return 0.;
+// }
 
-template<class Specie>
-inline Foam::scalar Foam::tabularEOS<Specie>::Cp
-(
-    scalar p,
-    scalar T
-) const
-{
-    return 0.;
-}
+// template<class Specie>
+// inline Foam::scalar Foam::tabularEOS<Specie>::Cp
+// (
+//     scalar p,
+//     scalar T
+// ) const
+// {
+//     return 0.;
+// }
 
-template<class Specie>
-inline Foam::scalar Foam::tabularEOS<Specie>::S
-(
-    scalar p,
-    scalar T
-) const
-{
-    return 0;
-}
+// template<class Specie>
+// inline Foam::scalar Foam::tabularEOS<Specie>::S
+// (
+//     scalar p,
+//     scalar T
+// ) const
+// {
+//     return 0;
+// }
 
 
 template<class Specie>
@@ -143,7 +143,7 @@ inline Foam::scalar Foam::tabularEOS<Specie>::Z
 
 
 template<class Specie>
-inline Foam::scalar Foam::tabularEOS<Specie>::CpMCv
+inline Foam::scalar Foam::tabularEOS<Specie>::cpMcv
 (
     scalar p,
     scalar T

@@ -101,34 +101,62 @@ template<class Thermo>
 inline Foam::scalar Foam::tabularTransport<Thermo>::mu
 (
     const scalar p,
-    const scalar T
+    const scalar Tt
 ) const
 {
-    //Info << "mu value: " << mu_(T, p) << endl;
-    return mu_(T, p);
+    return mu_(Tt, p);
 }
 
 
 template<class Thermo>
-inline Foam::scalar Foam::tabularTransport<Thermo>::kappa
+inline Foam::scalar Foam::tabularTransport<Thermo>::kappatr
 (
     const scalar p,
-    const scalar T
+    const scalar Tt
 ) const
 {
-    //Info << "kappa value: " << kappa_(T, p) << endl;
-    return kappa_(T, p);
+    return kappa_(Tt, p);
 }
 
 
 template<class Thermo>
-inline Foam::scalar Foam::tabularTransport<Thermo>::alphah
+inline Foam::scalar Foam::tabularTransport<Thermo>::kappave
 (
-    const scalar p,
-    const scalar T
+    const scalar p, const scalar Tt, const scalar Tve
 ) const
 {
-    return kappa(p, T) / this->Cp(p, T);
+    // No vib-electronic mode for equilibrium chemistry
+    return 0;
+}
+
+
+template<class Thermo>
+inline Foam::scalar Foam::tabularTransport<Thermo>::alphatr
+(
+    const scalar p, const scalar Tt
+) const
+{
+    if (this->Cv_t(p, Tt) != 0.0)
+    {
+        //Info << "kappatr(p, Tt): " << kappatr(p, Tt) << endl;
+        //Info << "this->Cv_t(p, Tt): " << this->Cv_t(p, Tt) << endl;
+        return kappatr(p, Tt)/this->Cv_t(p, Tt);
+    }
+    else
+    {
+        return 0.0;
+    } 
+}
+
+
+template<class Thermo>
+inline Foam::scalar Foam::tabularTransport<Thermo>::alphave
+(
+    const scalar p, const scalar Tt, const scalar Tve
+) const
+{
+    // No vib-electronic mode for equilibrium chemistry
+    return 0.0;
 }
 
 

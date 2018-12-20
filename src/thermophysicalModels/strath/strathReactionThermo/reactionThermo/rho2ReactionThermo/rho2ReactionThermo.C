@@ -55,7 +55,7 @@ Foam::FixedList<Foam::scalar, 2> Foam::rho2ReactionThermo::minMaxTemperatureFiel
 Foam::word Foam::rho2ReactionThermo::transportToTypedef(const word transportModel)
 {
     word typeDefName = word::null;
-    
+
     if(transportModel == "constant")
     {
         typeDefName = "demConstGasEThermoPhysicsH2TGD";
@@ -76,7 +76,11 @@ Foam::word Foam::rho2ReactionThermo::transportToTypedef(const word transportMode
     {
         typeDefName = "demCEAGasEThermoPhysicsH2TGD";
     }
-    
+    else if(transportModel == "tabular")
+    {
+	typeDefName = "tabularEThermoPhysics";
+    }
+
     return typeDefName;
 }
 

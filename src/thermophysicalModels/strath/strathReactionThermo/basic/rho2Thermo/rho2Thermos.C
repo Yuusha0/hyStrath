@@ -53,6 +53,10 @@ License
 #include "polynomialTransport.H"
 //#include "tabulatedTransport.H" // NEW VINCENT TODO
 
+#include "tabularEOS.H"
+#include "hTabularThermo.H"
+#include "tabularTransport.H"
+
 #include "heRho2Thermo.H"
 #include "pureMixture.H"
 

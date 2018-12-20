@@ -102,6 +102,15 @@ make2ReactionMixtureThermo
     demCEAGasEThermoPhysicsH2TGD
 );
 
+make2ReactionMixtureThermo
+(
+    rho2Thermo,
+    rho2ReactionThermo,
+    heRho2Thermo,
+    reacting2Mixture,
+    tabularEThermoPhysics
+);
+
 // Multi-component reaction thermo
 
 make2ReactionMixtureThermo
@@ -147,6 +156,15 @@ make2ReactionMixtureThermo
     heRho2Thermo,
     reacting2Mixture,
     demCEAGasHThermoPhysicsH2TGD
+);
+
+make2ReactionMixtureThermo
+(
+    rho2Thermo,
+    rho2ReactionThermo,
+    heRho2Thermo,
+    reacting2Mixture,
+    tabularHThermoPhysics
 );
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

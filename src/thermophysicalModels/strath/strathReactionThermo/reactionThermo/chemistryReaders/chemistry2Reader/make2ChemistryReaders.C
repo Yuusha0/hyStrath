@@ -54,6 +54,8 @@ make2ChemistryReaderType(foam2ChemistryReader, demPLEGasHThermoPhysicsH2TGD);
 make2ChemistryReader(demCEAGasHThermoPhysicsH2TGD);
 make2ChemistryReaderType(foam2ChemistryReader, demCEAGasHThermoPhysicsH2TGD);
 
+make2ChemistryReader(tabularHThermoPhysics);
+make2ChemistryReaderType(foam2ChemistryReader, tabularHThermoPhysics);
 
 // Solid chemistry readers for solids based on sensibleInternalEnergy
 
@@ -71,6 +73,9 @@ make2ChemistryReaderType(foam2ChemistryReader, demPLEGasEThermoPhysicsH2TGD);
 
 make2ChemistryReader(demCEAGasEThermoPhysicsH2TGD);
 make2ChemistryReaderType(foam2ChemistryReader, demCEAGasEThermoPhysicsH2TGD);
+
+make2ChemistryReader(tabularEThermoPhysics);
+make2ChemistryReaderType(foam2ChemistryReader, tabularEThermoPhysics);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
