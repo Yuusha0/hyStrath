@@ -3,19 +3,6 @@ cd ${0%/*} || exit 1    # Run from this directory
 
 set -e
 
-userName=`whoami`
-
-currentDir=`pwd`
-export sendingDir="$WM_PROJECT_USER_DIR"
-
-nProcs=1
-if [ $# -ne 0 ]
-  then nProcs=$1;
-fi
-
-mkdir -p $sendingDir
-
-
 # copy new files --------------------------------------------------------------
 foldersSrc="lagrangian parallel functionObjects/field-dsmcStrath functionObjects/lagrangian"
 filesInFolderSrc="functionObjects"

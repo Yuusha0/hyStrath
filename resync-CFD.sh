@@ -2,17 +2,6 @@
 
 set -e
 
-userName=`whoami`
-
-currentDir=`pwd`
-export sendingDir="$WM_PROJECT_USER_DIR"
-
-nProcs=1
-if [ $# -ne 0 ]
-  then nProcs=$1;
-fi
-
-
 # synchronize folders and compile new libraries -------------------------------
 rsync -rtvuc $currentDir/src/OpenFOAM/ $sendingDir/src/OpenFOAM/
 cd $sendingDir/src/OpenFOAM
