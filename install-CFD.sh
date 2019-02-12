@@ -6,7 +6,10 @@ set -e
 userName=`whoami`
 
 currentDir=`pwd`
-sendingDir="$WM_PROJECT_USER_DIR"
+buildDir=$currentDir/build
+mkdir -p $buildDir
+
+export sendingDir=$buildDir
 
 nProcs=1
 if [ $# -ne 0 ]

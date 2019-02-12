@@ -1,6 +1,6 @@
 EXE_INC = \
     -fpermissive \
-    -I$(WM_PROJECT_USER_DIR)/src/OpenFOAM/lnInclude \	
+    -I$(sendingDir)/src/OpenFOAM/lnInclude \	
     -I$(LIB_SRC)/finiteVolume/lnInclude \
     -I$(LIB_SRC)/transportModels/compressible/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
@@ -8,8 +8,8 @@ EXE_INC = \
     -I$(LIB_SRC)/thermophysicalModels/reactionThermo/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/chemistryModel/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/functions/Polynomial \
-    -I$(WM_PROJECT_USER_DIR)/src/thermophysicalModels/strath/strathSpecie/lnInclude \
-    -I$(WM_PROJECT_USER_DIR)/src/thermophysicalModels/strath/strathReactionThermo/lnInclude \
+    -I$(sendingDir)/src/thermophysicalModels/strath/strathSpecie/lnInclude \
+    -I$(sendingDir)/src/thermophysicalModels/strath/strathReactionThermo/lnInclude \
     -I$(LIB_SRC)/thermophysicalModels/thermophysicalProperties/lnInclude \
     -I$(LIB_SRC)/ODE/lnInclude
 

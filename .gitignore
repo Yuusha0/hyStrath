@@ -7,6 +7,9 @@
 # Fichiers de sauvegarde OSX
 **/._*
 
+# Dossier de compilation
+build/
+
 # Git merge files
 *.orig
 *_BACKUP_*

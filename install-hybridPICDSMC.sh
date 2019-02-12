@@ -6,7 +6,7 @@ set -e
 userName=`whoami`
 
 currentDir=`pwd`
-sendingDir="$WM_PROJECT_USER_DIR"
+export sendingDir="$WM_PROJECT_USER_DIR"
 
 nProcs=1
 if [ $# -ne 0 ]
