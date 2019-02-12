@@ -2,11 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2018 Yuusha and tilasoldo
+    \\  /    A nd           | Copyright (C) 2018-2019 Yuusha and tilasoldo
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of tilasoldo and Yuusha contribution to OpenFOAM.
+    This file is part of tabulatedThermophysicalProperties on OpenFOAM.
     It is based on chriss85 contribution for OpenFOAM 2.3.x.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
@@ -147,15 +147,14 @@ public:
             //- Return density [kg/m^3]
             inline scalar rho(scalar p, scalar T) const;
 
-            // DELETED FOR HYFOAM **********************************************
             //- Return enthalpy departure [J/kg]
-            // inline scalar H(scalar p, scalar T) const;
+            inline scalar H(scalar p, scalar T) const;
 
-            // //- Return Cp departure [J/(kg K]
-            // inline scalar Cp(scalar p, scalar T) const;
+            //- Return Cp departure [J/(kg K]
+            inline scalar Cp(scalar p, scalar T) const;
 
-            // //- Return entropy [J/(kg K)]
-            // inline scalar S(const scalar p, const scalar T) const;
+            //- Return entropy [J/(kg K)]
+            inline scalar S(const scalar p, const scalar T) const;
 
             //- Return compressibility rho/p [s^2/m^2]
             inline scalar psi(scalar p, scalar T) const;
@@ -164,7 +163,7 @@ public:
             inline scalar Z(scalar p, scalar T) const;
 
             //- Return (cp - cv) [J/(kmol K]
-            inline scalar cpMcv(scalar p, scalar T) const;
+            inline scalar CpMCv(scalar p, scalar T) const;
 
 
         // IO

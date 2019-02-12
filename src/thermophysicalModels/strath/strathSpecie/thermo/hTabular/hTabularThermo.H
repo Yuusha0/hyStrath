@@ -2,11 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2018 Yuusha and tilasoldo
+    \\  /    A nd           | Copyright (C) 2018-2019 Yuusha and tilasoldo
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of tilasoldo and Yuusha contribution to OpenFOAM.
+    This file is part of tabulatedThermophysicalProperties on OpenFOAM.
     It is based on chriss85 contribution for OpenFOAM 2.3.x.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
@@ -27,7 +27,7 @@ Class
 
 Description
     Thermodynamics package templated on the equation of state, using tabular
-    functions for \c cp and \c h. Two temperatures 
+    functions for \c cp and \c h.
 
     \c h derived from \c cp
 
@@ -118,17 +118,17 @@ private:
         //- Tabulated heat of formation
         extrapolation2DTable<scalar> hfTable;
 
-        //- Constant heat of formation
-        scalar Hf_;
-
-        //- Standard entropy
-        scalar Sf_;
-
         //- Specific heat at constant pressure table
         extrapolation2DTable<scalar> cpTable;
 
         //- Enthalpy polynomial coeffs  [J/kg]
 	extrapolation2DTable<scalar> hTable;
+
+        //- Constant heat of formation
+        scalar Hf_;
+
+        //- Standard entropy
+        scalar Sf_;
 
 
     // Private Member Functions
@@ -170,7 +170,7 @@ public:
         }
 
         //- Limit the temperature to be in the range Tlow_ to Thigh_
-        inline scalar limit(const scalar) const;
+        inline scalar limit(const scalar T) const;
 
         //- Return the enthalpy of formation mode as a word
         word hfModeToWord(const hfMode& mode) const;
@@ -180,72 +180,31 @@ public:
 
         // Fundamental properties
 
-            // Heat capacity at constant volume for the trans-rotational mode
-            // [J/(kmol K)]
-            scalar cv_t(const scalar, const scalar) const;
-            
-            // Heat capacity at constant volume for the rotational mode
-            // [J/(kmol K)]
-            scalar cv_r(const scalar, const scalar) const;
-            
-            // Heat capacity at constant volume for the vibrational mode
-            // [J/(kmol K)], mode vibMode
-            scalar cv_v_mode(const label vibMode, const scalar, const scalar) const;
-            
-            // Heat capacity at constant volume for the vibrational mode
-            // [J/(kmol K)]
-            scalar cv_v(const scalar, const scalar) const;
-            
-            // Heat capacity at constant volume for the electronic mode
-            // [J/(kmol K)]
-            scalar cv_el(const scalar, const scalar) const;
-            
-            // Heat capacity at constant volume for the electron mode
-            // [J/(kmol K)]
-            scalar cv_e(const scalar, const scalar) const;
+            //- Heat capacity at constant pressure [J/(kmol K)]
+            inline scalar Cp(const scalar p, const scalar T) const;
 
-            // Absolute Enthalpy
-            // [J/kmol]
-            scalar ha(const scalar, const scalar, const scalar) const;
+            //- Absolute Enthalpy [J/kmol]
+            inline scalar Ha(const scalar p, const scalar T) const;
 
-            // Sensible internal energy [J/kmol], trans-rotational mode
-            scalar ets(const scalar, const scalar) const;
-            
-            // Sensible internal energy [J/kmol], rotational mode
-            scalar ers(const scalar, const scalar) const;
-            
-            // Sensible internal energy [J/kmol], vibrational mode, mode vibMode
-            scalar evs_mode(const label vibMode, const scalar, const scalar) const;
-            
-            // Sensible internal energy [J/kmol], vibrational mode
-            scalar evs(const scalar, const scalar) const;
-            
-            // Sensible internal energy [J/kmol], electronic mode
-            scalar eels(const scalar, const scalar) const;
-            
-            // Sensible internal energy [J/kmol], electron mode
-            scalar ees(const scalar, const scalar) const;
-            
-            //- Degrees of freedom associated with the rotational energy mode [-]
-            inline scalar zetar(const scalar p, const scalar Tt, const scalar Tv) const;
-            
-            //- Degrees of freedom associated with the vibrational energy mode [-], mode vibMode
-            inline scalar zetav_mode(const label vibMode, const scalar p, const scalar Tv) const;
-            
-            //- Degrees of freedom associated with the vibrational energy mode [-]
-            inline scalar zetav(const scalar p, const scalar Tv) const;
-            
-            //- Degrees of freedom associated with the electronic energy mode [-]
-            inline scalar zetael(const scalar p, const scalar Tv) const;
-            
-            //- Degrees of freedom associated with the electron energy mode [-]
-            inline scalar zetae(const scalar p, const scalar Tv) const;
-    
-            // Chemical enthalpy [J/kmol]
-            scalar hc() const;
+            //- Sensible enthalpy [J/kmol]
+            inline scalar Hs(const scalar p, const scalar T) const;
 
-            // Entropy [J/(kmol K)]
-            scalar s(const scalar, const scalar, const scalar) const;
+            //- Chemical enthalpy [J/kmol]
+            inline scalar Hc() const;
+
+            //- Entropy [J/(kmol K)]
+            // Not implemented
+            inline scalar S(const scalar p, const scalar T) const;
+
+
+        // Derivative term used for Jacobian
+
+            //- Derivative of Gibbs free energy w.r.t. temperature
+            // Not implemented
+            inline scalar dGdT(const scalar p, const scalar T) const;
+
+            //- Temperature derivative of heat capacity at constant pressure
+            inline scalar dCpdT(const scalar p, const scalar T) const;
 
 
         // I-O

@@ -2,11 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2018 Yuusha and tilasoldo
+    \\  /    A nd           | Copyright (C) 2018-2019 Yuusha and tilasoldo
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of tilasoldo and Yuusha contribution to OpenFOAM.
+    This file is part of tabulatedThermophysicalProperties on OpenFOAM.
     It is based on chriss85 contribution for OpenFOAM 2.3.x.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
@@ -145,276 +145,78 @@ Foam::hTabularThermo<EquationOfState>::wordToHfMode
     }
 }
 
-
 template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::cv_t
+inline Foam::scalar Foam::hTabularThermo<EquationOfState>::Cp
 (
-    const scalar p, const scalar Tt
+    const scalar p, const scalar T
 ) const
 {
-    return cpTable(Tt, p) - EquationOfState::cpMcv(p,Tt) + this->cv_r(p,Tt);
+ // Info << "cp for T= " << T << ", p= " << p  << ": " << cpTable(T, p) << endl;
+    return cpTable(T, p) + EquationOfState::Cp(p, T);
 }
 
 
 template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::cv_r
+inline Foam::scalar Foam::hTabularThermo<EquationOfState>::Ha
 (
-    const scalar p, const scalar Tt
+    const scalar p, const scalar T
 ) const
 {
-    // No rotational mode for equilibrium chemistry
+    return hTable(p, T) + EquationOfState::H(p, T);
+
+}
+
+
+template<class EquationOfState>
+inline Foam::scalar Foam::hTabularThermo<EquationOfState>::Hs
+(
+    const scalar p, const scalar T
+) const
+{
+    // Switch according constant or tabulated heat of formation
+    switch(mode_)
+    {
+    case hTabularThermo::constant:
+	{
+	    return Ha(p, T) - Hc();
+	}
+
+    case hTabularThermo::tabulated:
+	{
+	    return Ha(p, T) - hfTable(p, T);
+	}
+    }
+
     return 0;
 }
 
 
 template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::cv_v_mode
-(
-    const label vibMode,
-    const scalar p,
-    const scalar Tv
-) const
-{
-    // No vibrational mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::cv_v
-(
-    const scalar p,
-    const scalar Tv
-) const
-{
-    // No vibrational mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::cv_el
-(
-    const scalar p,
-    const scalar Tv
-) const
-{
-    // No electronic mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::cv_e
-(
-    const scalar p,
-    const scalar Tv
-) const
-{
-    // No electron mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::ha
-(
-    const scalar p,
-    const scalar Tt,
-    const scalar Tv
-) const
-{
-    return hTable(p, Tt) + hc();
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::ets
-(
-    const scalar p,
-    const scalar Tt
-) const
-{
-    // No trans-rotaional mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::ers
-(
-    const scalar p,
-    const scalar Tt
-) const
-{
-    // No rotational mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::evs_mode
-(
-    const label vibMode,
-    const scalar p,
-    const scalar Tv
-) const
-{
-    // No vibrational mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::evs
-(
-    const scalar p,
-    const scalar Tv
-) const
-{
-    // No vibrational mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::eels
-(
-    const scalar p,
-    const scalar Tv
-) const
-{
-    // No electronic mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::ees
-(
-    const scalar p,
-    const scalar Tv
-) const
-{
-    // No electron mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::zetar
-(
-    const scalar p, 
-    const scalar Tt, 
-    const scalar Tv
-) const
-{
-    // No rotational energy for equilibrium chemistry
-    return 0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::zetav_mode
-(
-    const label vibMode, 
-    const scalar p, 
-    const scalar Tv
-) const
-{
-    // No vibrational energy for equilibrium chemistry
-    return 0.0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::zetav
-(
-    const scalar p, 
-    const scalar Tv
-) const
-{
-    // No vibrational energy mode for equilibrium chemistry
-    return 0.0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::zetael
-(
-    const scalar p, 
-    const scalar Tv
-) const
-{
-    // No electronic energy mode for equilibrium chemistry
-    return 0.0;
-}
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::zetae
-(
-    const scalar p, 
-    const scalar Tv
-) const
-{
-    // No electron energy for equilibrium chemistry
-    return 0.0;
-}
-
-// DELETED according to hyFoam thermophysical models ***************************
-// template<class EquationOfState>
-// inline Foam::scalar Foam::hTabularThermo<EquationOfState>::Hs
-// (
-//     const scalar p, const scalar T
-// ) const
-// {
-//     // Switch according constant or tabulated heat of formation
-//     switch(mode_)
-//     {
-//     case hTabularThermo::constant:
-// 	{
-// 	    return Ha(p, T) - Hc();
-// 	}
-
-//     case hTabularThermo::tabulated:
-// 	{
-// 	    return Ha(p, T) - hfTable(p, T);
-// 	}
-//     }
-
-//     return 0;
-// }
-
-
-template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::hc()
+inline Foam::scalar Foam::hTabularThermo<EquationOfState>::Hc()
 const
 {
     // Switch according constant or tabulated heat of formation
     switch(mode_)
     {
-        case hTabularThermo::constant:
+    case hTabularThermo::constant:
 	{
 	    return Hf_;
 	}
-    
+
 	// Do not use Hc when using tabulated heat of formation
-        case hTabularThermo::tabulated:
+    case hTabularThermo::tabulated:
 	{
 	    return 0;
 	}
     }
-    
+
     return 0;
 }
 
 template<class EquationOfState>
-inline Foam::scalar Foam::hTabularThermo<EquationOfState>::s
+inline Foam::scalar Foam::hTabularThermo<EquationOfState>::S
 (
-    const scalar p,
-    const scalar Tt,
-    const scalar Tv
+    const scalar p, const scalar T
 ) const
 {
     notImplemented
@@ -422,7 +224,35 @@ inline Foam::scalar Foam::hTabularThermo<EquationOfState>::s
         "scalar hTabularThermo<EquationOfState>::"
         "s(const scalar p, const scalar T) const"
     );
-    return Tt;
+    return T;
+}
+
+template<class EquationOfState>
+inline Foam::scalar Foam::hTabularThermo<EquationOfState>::dGdT
+(
+    const scalar p,
+    const scalar T
+) const
+{
+    notImplemented
+    (
+        "scalar hTabularThermo<EquationOfState>::"
+        "dGdT(const scalar p, const scalar T) const"
+    );
+    return 0;
+}
+
+template<class EquationOfState>
+inline Foam::scalar Foam::hTabularThermo<EquationOfState>::dCpdT
+(
+    const scalar p,
+    const scalar T
+) const
+{
+    return
+    (
+         cpTable.Tderivative(T, p)
+    );
 }
 
 
@@ -452,14 +282,14 @@ inline void Foam::hTabularThermo<EquationOfState>::operator+=
     const hTabularThermo<EquationOfState>& pt
 )
 {
-    scalar Y1 = this->nMoles();
+    scalar Y1 = this->Y();
 
     EquationOfState::operator+=(pt);
 
-    if (mag(this->nMoles()) > SMALL)
+    if (mag(this->Y()) > SMALL)
     {
-        Y1 /= this->nMoles();
-        const scalar Y2 = pt.nMoles()/this->nMoles();
+        Y1 /= this->Y();
+        const scalar Y2 = pt.Y()/this->Y();
 
         hfTable = Y1*hfTable + Y2*pt.hfTable;
         cpTable = Y1*cpTable + Y2*pt.cpTable;
@@ -491,7 +321,7 @@ inline Foam::hTabularThermo<EquationOfState> Foam::operator+
     EquationOfState eofs = pt1;
     eofs += pt2;
 
-    if (mag(eofs.nMoles()) < SMALL)
+    if (mag(eofs.Y()) < SMALL)
     {
         return hTabularThermo<EquationOfState>
         (
@@ -503,8 +333,8 @@ inline Foam::hTabularThermo<EquationOfState> Foam::operator+
         );
     }
     {
-        const scalar Y1 = pt1.nMoles()/eofs.nMoles();
-        const scalar Y2 = pt2.nMoles()/eofs.nMoles();
+        const scalar Y1 = pt1.Y()/eofs.Y();
+        const scalar Y2 = pt2.Y()/eofs.Y();
 
         return hTabularThermo<EquationOfState>
         (
@@ -549,8 +379,8 @@ inline Foam::hTabularThermo<EquationOfState> Foam::operator==
      == static_cast<const EquationOfState&>(pt2)
     );
 
-    const scalar Y1 = pt1.nMoles()/eofs.nMoles();
-    const scalar Y2 = pt2.nMoles()/eofs.nMoles();
+    const scalar Y1 = pt1.Y()/eofs.Y();
+    const scalar Y2 = pt2.Y()/eofs.Y();
 
     return hTabularThermo<EquationOfState>
     (

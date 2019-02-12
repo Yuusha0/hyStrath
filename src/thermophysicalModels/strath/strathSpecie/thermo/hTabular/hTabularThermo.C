@@ -2,11 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2018 Yuusha and tilasoldo
+    \\  /    A nd           | Copyright (C) 2018-2019 Yuusha and tilasoldo
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of tilasoldo and Yuusha contribution to OpenFOAM.
+    This file is part of tabulatedThermophysicalProperties on OpenFOAM.
     It is based on chriss85 contribution for OpenFOAM 2.3.x.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
@@ -45,9 +45,9 @@ Foam::hTabularThermo<EquationOfState>::hTabularThermo
     cpTable = extrapolation2DTable<scalar>("constant/cpTable");
     hTable = extrapolation2DTable<scalar>("constant/hTable");
     hfTable = extrapolation2DTable<scalar>("constant/hfTable");
-    cpTable.outOfBounds(extrapolation2DTable<scalar>::EXTRAPOLATE);
-    hTable.outOfBounds(extrapolation2DTable<scalar>::EXTRAPOLATE);
-    hfTable.outOfBounds(extrapolation2DTable<scalar>::EXTRAPOLATE);
+    cpTable.outOfBounds(extrapolation2DTable<scalar>::CLAMP);
+    hTable.outOfBounds(extrapolation2DTable<scalar>::CLAMP);
+    hfTable.outOfBounds(extrapolation2DTable<scalar>::CLAMP);
 }
 
 

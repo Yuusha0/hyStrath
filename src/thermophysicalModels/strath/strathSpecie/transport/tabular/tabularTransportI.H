@@ -2,11 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2018 Yuusha and tilasoldo
+    \\  /    A nd           | Copyright (C) 2018-2019 Yuusha and tilasoldo
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of tilasoldo and Yuusha contribution to OpenFOAM.
+    This file is part of tabulatedThermophysicalProperties on OpenFOAM.
     It is based on chriss85 contribution for OpenFOAM 2.3.x.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
@@ -38,8 +38,8 @@ inline Foam::tabularTransport<Thermo>::tabularTransport
     mu_(mu),
     kappa_(kappa)
 {
-    mu_.outOfBounds(extrapolation2DTable<scalar>::EXTRAPOLATE);
-    kappa_.outOfBounds(extrapolation2DTable<scalar>::EXTRAPOLATE);
+    mu_.outOfBounds(extrapolation2DTable<scalar>::CLAMP);
+    kappa_.outOfBounds(extrapolation2DTable<scalar>::CLAMP);
 }
 
 
@@ -101,62 +101,34 @@ template<class Thermo>
 inline Foam::scalar Foam::tabularTransport<Thermo>::mu
 (
     const scalar p,
-    const scalar Tt
+    const scalar T
 ) const
 {
-    return mu_(Tt, p);
+    //Info << "mu value: " << mu_(T, p) << endl;
+    return mu_(T, p);
 }
 
 
 template<class Thermo>
-inline Foam::scalar Foam::tabularTransport<Thermo>::kappatr
+inline Foam::scalar Foam::tabularTransport<Thermo>::kappa
 (
     const scalar p,
-    const scalar Tt
+    const scalar T
 ) const
 {
-    return kappa_(Tt, p);
+    //Info << "kappa value: " << kappa_(T, p) << endl;
+    return kappa_(T, p);
 }
 
 
 template<class Thermo>
-inline Foam::scalar Foam::tabularTransport<Thermo>::kappave
+inline Foam::scalar Foam::tabularTransport<Thermo>::alphah
 (
-    const scalar p, const scalar Tt, const scalar Tve
+    const scalar p,
+    const scalar T
 ) const
 {
-    // No vib-electronic mode for equilibrium chemistry
-    return 0;
-}
-
-
-template<class Thermo>
-inline Foam::scalar Foam::tabularTransport<Thermo>::alphatr
-(
-    const scalar p, const scalar Tt
-) const
-{
-    if (this->Cv_t(p, Tt) != 0.0)
-    {
-        //Info << "kappatr(p, Tt): " << kappatr(p, Tt) << endl;
-        //Info << "this->Cv_t(p, Tt): " << this->Cv_t(p, Tt) << endl;
-        return kappatr(p, Tt)/this->Cv_t(p, Tt);
-    }
-    else
-    {
-        return 0.0;
-    } 
-}
-
-
-template<class Thermo>
-inline Foam::scalar Foam::tabularTransport<Thermo>::alphave
-(
-    const scalar p, const scalar Tt, const scalar Tve
-) const
-{
-    // No vib-electronic mode for equilibrium chemistry
-    return 0.0;
+    return kappa(p, T) / this->Cp(p, T);
 }
 
 
@@ -183,14 +155,14 @@ inline void Foam::tabularTransport<Thermo>::operator+=
     const tabularTransport<Thermo>& pt
 )
 {
-    scalar Y1 = this->nMoles();
+    scalar Y1 = this->Y();
 
     Thermo::operator+=(pt);
 
-    if (mag(this->nMoles()) > SMALL)
+    if (mag(this->Y()) > SMALL)
     {
-	Y1 /= this->nMoles();
-	scalar Y2 = pt.nMoles()/this->nMoles();
+	Y1 /= this->Y();
+	scalar Y2 = pt.Y()/this->Y();
 
 	mu_ = Y1*mu_ + Y2*pt.mu_;
 	kappa_ = Y1*kappa_ + Y2*pt.kappa_;
@@ -222,7 +194,7 @@ inline Foam::tabularTransport<Thermo> Foam::operator+
         static_cast<const Thermo&>(pt1) + static_cast<const Thermo&>(pt2)
     );
 
-    if (mag(t.nMoles()) < SMALL)
+    if (mag(t.Y()) < SMALL)
     {
         return tabularTransport<Thermo>
         (
@@ -234,8 +206,8 @@ inline Foam::tabularTransport<Thermo> Foam::operator+
     }
     else
     {
-        scalar Y1 = pt1.nMoles()/t.nMoles();
-        scalar Y2 = pt2.nMoles()/t.nMoles();
+        scalar Y1 = pt1.Y()/t.Y();
+        scalar Y2 = pt2.Y()/t.Y();
 
         return tabularTransport<Thermo>
         (

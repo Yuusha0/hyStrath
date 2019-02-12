@@ -2,11 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2018 Yuusha and tilasoldo
+    \\  /    A nd           | Copyright (C) 2018-2019 Yuusha and tilasoldo
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of tilasoldo and Yuusha contribution to OpenFOAM.
+    This file is part of tabulatedThermophysicalProperties on OpenFOAM.
     It is based on chriss85 contribution for OpenFOAM 2.3.x.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
@@ -88,36 +88,36 @@ inline Foam::scalar Foam::tabularEOS<Specie>::rho
     return densityTable(T, p);
 }
 
-// DELETED FOR HYFOAM **********************************************************
-// template<class Specie>
-// inline Foam::scalar Foam::tabularEOS<Specie>::H
-// (
-//     scalar p,
-//     scalar T
-// ) const
-// {
-//     return 0.;
-// }
+// Totally not sure of what I am doing here...
+template<class Specie>
+inline Foam::scalar Foam::tabularEOS<Specie>::H
+(
+    scalar p,
+    scalar T
+) const
+{
+    return 0.;
+}
 
-// template<class Specie>
-// inline Foam::scalar Foam::tabularEOS<Specie>::Cp
-// (
-//     scalar p,
-//     scalar T
-// ) const
-// {
-//     return 0.;
-// }
+template<class Specie>
+inline Foam::scalar Foam::tabularEOS<Specie>::Cp
+(
+    scalar p,
+    scalar T
+) const
+{
+    return 0.;
+}
 
-// template<class Specie>
-// inline Foam::scalar Foam::tabularEOS<Specie>::S
-// (
-//     scalar p,
-//     scalar T
-// ) const
-// {
-//     return 0;
-// }
+template<class Specie>
+inline Foam::scalar Foam::tabularEOS<Specie>::S
+(
+    scalar p,
+    scalar T
+) const
+{
+    return 0;
+}
 
 
 template<class Specie>
@@ -143,7 +143,7 @@ inline Foam::scalar Foam::tabularEOS<Specie>::Z
 
 
 template<class Specie>
-inline Foam::scalar Foam::tabularEOS<Specie>::cpMcv
+inline Foam::scalar Foam::tabularEOS<Specie>::CpMCv
 (
     scalar p,
     scalar T

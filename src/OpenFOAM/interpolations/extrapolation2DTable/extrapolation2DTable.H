@@ -2,11 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2018 Yuusha and tilasoldo
+    \\  /    A nd           | Copyright (C) 2018-2019 Yuusha and tilasoldo
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of tilasoldo and Yuusha contribution to OpenFOAM.
+    This file is part of tabulatedThermophysicalProperties on OpenFOAM.
     It is based on chriss85 contribution for OpenFOAM 2.3.x.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
@@ -90,9 +90,10 @@ public:
         //- Enumeration for handling out-of-bound values
         enum boundsHandling
         {
-            ERROR,         /*!< Exit with a FatalError */
-            WARN,          /*!< Issue warning and extrapolate value (default) */
-            EXTRAPOLATE    /*!< Extrapolate value to the start/end value */
+            ERROR,         //!< Exit with a FatalError
+            WARN,          //!< Issue warning and extrapolate value (default)
+            EXTRAPOLATE,   //!< Extrapolate value to the start/end value
+	    CLAMP          //!< Clamp value to the start/end value
         };
 
         //- Enumeration for search in the tables

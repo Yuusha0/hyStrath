@@ -2,11 +2,11 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2018 Yuusha and tilasoldo
+    \\  /    A nd           | Copyright (C) 2018-2019 Yuusha and tilasoldo
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
-    This file is part of tilasoldo and Yuusha contribution to OpenFOAM.
+    This file is part of tabulatedThermophysicalProperties on OpenFOAM.
     It is based on chriss85 contribution for OpenFOAM 2.3.x.
 
     OpenFOAM is free software: you can redistribute it and/or modify it
@@ -41,10 +41,8 @@ void Foam::extrapolation2DTable<Type>::readTable()
 
     if (this->empty())
     {
-        FatalErrorIn
-        (
-            "Foam::extrapolation2DTable<Type>::readTable()"
-	)   << "table read from " << fName << " is empty" << nl
+        FatalErrorInFunction
+	    << "table read from " << fName << " is empty" << nl
             << exit(FatalError);
     }
 
@@ -62,7 +60,7 @@ Foam::extrapolation2DTable<Type>::extrapolation2DTable()
     boundsHandling_(extrapolation2DTable::WARN),
     searchMethod_(extrapolation2DTable::simple),
     fileName_("fileNameIsUndefined"),
-    reader_(NULL),
+    reader_(nullptr),
     isNull_(true)
 {}
 
@@ -81,7 +79,7 @@ Foam::extrapolation2DTable<Type>::extrapolation2DTable
     boundsHandling_(bounds),
     searchMethod_(method),
     fileName_(fName),
-    reader_(NULL),
+    reader_(nullptr),
     isNull_(isNull)
 {}
 
@@ -158,34 +156,26 @@ Type Foam::extrapolation2DTable<Type>::extrapolateValue
 	{
 	    case extrapolation2DTable::ERROR:
             {
-                FatalErrorIn
-                (
-                    "Foam::extrapolation2DTable<Type>::extrapolateValue"
-                    "("
-                        "List<Tuple2<scalar, Type> >&, "
-                        "const scalar"
-                    ")"
-                )
+                FatalErrorInFunction
 		    << "value (" << lookupValue << ") less than lower "
                     << "bound (" << minLimit << ")" << nl
                     << exit(FatalError);
                 break;
             }
+	    case extrapolation2DTable::CLAMP:
+            {
+                return data.first().second();
+                break;
+            }
             case extrapolation2DTable::WARN:
             {
-                WarningIn
-                (
-                    "Foam::extrapolation2DTable<Type>::extrapolateValue"
-                    "("
-                        "List<Tuple2<scalar, Type> >&, "
-                        "const scalar"
-                    ")"
-                )
+                WarningInFunction
 		    << "value (" << lookupValue << ") less than lower "
                     << "bound (" << minLimit << ")" << nl
                     << "    extrapolating the first entry"
                     << endl;
                 // fall-through to 'EXTRAPOLATE'
+		[[fallthrough]];
             }
             case extrapolation2DTable::EXTRAPOLATE:
             {
@@ -193,6 +183,14 @@ Type Foam::extrapolation2DTable<Type>::extrapolateValue
 		scalar x2 = data[1].first();
 		Type y1 = data[0].second();
 		Type y2 = data[1].second();
+		if (x2 == x1)
+		{
+		    FatalErrorInFunction
+			<< "Enthalpy (" << x2 << ") is equal to (" << x1 << ")"
+			<< nl
+			<< "Impossible to calculate the temperature !" << nl
+			<< exit(FatalError);
+		}
 		//extrapolation
                 return y1 + (lookupValue - x1)/(x2 - x1)*(y2 - y1);
                 break;
@@ -205,34 +203,26 @@ Type Foam::extrapolation2DTable<Type>::extrapolateValue
         {
 	    case extrapolation2DTable::ERROR:
             {
-                FatalErrorIn
-                (
-                    "Foam::extrapolation2DTable<Type>::extrapolateValue"
-                    "("
-                        "List<Tuple2<scalar, Type> >&, "
-                        "const scalar"
-                    ")"
-                )
+                FatalErrorInFunction
 		    << "value (" << lookupValue << ") greater than upper "
                     << "bound (" << maxLimit << ")" << nl
                     << exit(FatalError);
                 break;
             }
+	    case extrapolation2DTable::CLAMP:
+            {
+                return data.last().second();
+                break;
+            }
             case extrapolation2DTable::WARN:
             {
-                WarningIn
-                (
-                    "Foam::extrapolation2DTable<Type>::extrapolateValue"
-                    "("
-                        "List<Tuple2<scalar, Type> >&, "
-                        "const scalar"
-                    ")"
-                )
+                WarningInFunction
 		    << "value (" << lookupValue << ") greater than upper "
                     << "bound (" << maxLimit << ")" << nl
                     << "    Continuing with the last entry"
                     << endl;
                 // fall-through to 'EXTRAPOLATE'
+                [[fallthrough]];
             }
             case extrapolation2DTable::EXTRAPOLATE:
             {
@@ -326,16 +316,9 @@ Type Foam::extrapolation2DTable<Type>::extrapolateValue
 	   }
 	   if (n > data.size())
 	   {
-	       FatalErrorIn
-	       (
-                   "Foam::extrapolation2DTable<Type>::extrapolateValue"
-                   "("
-		        "List<Tuple2<scalar, Type> >&, "
-                        "const scalar"
-                   ")"
-	       )
-	       << "Bisection algorithm fails " << nl
-	       << exit(FatalError);
+	       FatalErrorInFunction
+		   << "Bisection algorithm fails " << nl
+		   << exit(FatalError);
 	   }
 	   break;
        }
@@ -372,7 +355,6 @@ Foam::label Foam::extrapolation2DTable<Type>::Xi
     {
         limitI = t.size() - 1;
     }
-    
     if (
         ((valueX>t[limitI].first()) && !reverse)
         || ((valueX<t[limitI].first()) && reverse)
@@ -382,30 +364,14 @@ Foam::label Foam::extrapolation2DTable<Type>::Xi
         {
 	    case extrapolation2DTable::ERROR:
             {
-                FatalErrorIn
-                (
-                    "Foam::extrapolation2DTable<Type>::Xi"
-                    "("
-                        "List<Tuple2<scalar, L> >&, "
-                        "const scalar, "
-		        "const bool,"
-                    ")"
-                )
+                FatalErrorInFunction
 		    << "value (" << valueX << ") outside table " << nl
                     << exit(FatalError);
                 break;
             }
             case extrapolation2DTable::WARN:
             {
-                WarningIn
-                (
-                    "Foam::extrapolation2DTable<Type>::Xi"
-                    "("
-                        "List<Tuple2<scalar, L> >&, "
-                        "const scalar, "
-		        "const bool"
-                    ")"
-                )
+                WarningInFunction
 		    << "value (" << valueX << ") outside table " << nl
                     << "    Continuing with the last entry"
                     << endl;
@@ -460,13 +426,13 @@ Foam::label Foam::extrapolation2DTable<Type>::Xi
 	    while (n <= t.size())
 	    {
 		i = std::floor((k + j)/2);
-		if (fabs(t[i].first()- valueX) < SMALL || (j - k) == 1)
+		if (fabs(t[i].first() - valueX) < SMALL || (j - k) == 1)
 		{
 		    if (t[i].first() > valueX + SMALL && !reverse && i>0)
 		    {
 			--i;
 		    }
-		    else if (t[i].first() < valueX - SMALL  && reverse && i<nX)
+		    else if (t[i].first() < valueX - SMALL && reverse && i<nX)
 		    {
 			++i;
 		    }
@@ -484,15 +450,7 @@ Foam::label Foam::extrapolation2DTable<Type>::Xi
 	    }
 	    if (n > t.size())
 	    {
-		FatalErrorIn
-		(
-                    "Foam::extrapolation2DTable<Type>::Xi"
-                    "("
-                        "List<Tuple2<scalar, Type> >&, "
-                        "const scalar, "
-		        "const bool"
-                    ")"
-		)
+		FatalErrorInFunction
 		    << "Bisection algorithm fails " << nl
                     << exit(FatalError);
 	    }
@@ -536,14 +494,7 @@ Type Foam::extrapolation2DTable<Type>::Tderivative
 
     if (t.size() <= 1)
     {
-	WarningIn
-        (
-            "Type Foam::extrapolation2DTable<Type>::Tderivative"
-            "("
-	        "const scalar, "
-  	        "const scalar"
-            ") const"
-        )
+	WarningInFunction
             << "cannot derivate a zero- or one-sized table - returning zero"
 	    << endl;
 	return pTraits<Type>::zero;
@@ -625,17 +576,10 @@ Type Foam::extrapolation2DTable<Type>::operator()
     const table& t = *this;
     if (nX == 0)
     {
-        WarningIn
-        (
-            "Type Foam::extrapolation2DTable<Type>::operator()"
-            "("
-                "const scalar, "
-                "const scalar"
-            ") const"
-        )
+        WarningInFunction
             << "cannot extrapolate a zero-sized table - returning zero" << endl;
 
-        return pTraits<Type>::zero;
+        return Zero;
     }
     else if (nX == 1)
     {
@@ -718,6 +662,11 @@ Foam::word Foam::extrapolation2DTable<Type>::boundsHandlingToWord
             enumName = "error";
             break;
         }
+        case extrapolation2DTable::CLAMP:
+        {
+            enumName = "clamp";
+            break;
+        }
         case extrapolation2DTable::WARN:
         {
             enumName = "warn";
@@ -745,6 +694,10 @@ Foam::extrapolation2DTable<Type>::wordToBoundsHandling
     {
         return extrapolation2DTable::ERROR;
     }
+    else if (bound == "clamp")
+    {
+        return extrapolation2DTable::CLAMP;
+    }
     else if (bound == "warn")
     {
         return extrapolation2DTable::WARN;
@@ -755,13 +708,7 @@ Foam::extrapolation2DTable<Type>::wordToBoundsHandling
     }
     else
     {
-        WarningIn
-        (
-            "Foam::extrapolation2DTable<Type>::wordToBoundsHandling"
-            "("
-            "    const word&"
-            ")"
-        )
+        WarningInFunction
 	    << "bad outOfBounds specifier " << bound << " using 'warn'" << endl;
 
         return extrapolation2DTable::WARN;
@@ -820,13 +767,7 @@ Foam::extrapolation2DTable<Type>::wordToSearchMethod
     }
     else
     {
-        WarningIn
-        (
-            "Foam::extrapolation2DTable<Type>::wordToSearchMethod"
-            "("
-            "    const word&"
-            ")"
-        )
+        WarningInFunction
 	    << "bad searchMethod specifier "
 	    << searchMethod << " using 'simple'" << endl;
 
@@ -1030,10 +971,7 @@ void Foam::extrapolation2DTable<Type>::checkOrder() const
         // avoid duplicate values (divide-by-zero error)
         if (currValue <= prevValue)
         {
-            FatalErrorIn
-            (
-                "Foam::extrapolation2DTable<Type>::checkOrder() const"
-            )
+            FatalErrorInFunction
 		<< "out-of-order value: "
                 << currValue << " at index " << i << nl
                 << exit(FatalError);
