@@ -101,34 +101,62 @@ template<class Thermo>
 inline Foam::scalar Foam::tabularTransport<Thermo>::mu
 (
     const scalar p,
-    const scalar T
+    const scalar Tt
 ) const
 {
-    //Info << "mu value: " << mu_(T, p) << endl;
-    return mu_(T, p);
+    return mu_(Tt, p);
 }
 
 
 template<class Thermo>
-inline Foam::scalar Foam::tabularTransport<Thermo>::kappa
+inline Foam::scalar Foam::tabularTransport<Thermo>::kappatr
 (
     const scalar p,
-    const scalar T
+    const scalar Tt
 ) const
 {
-    //Info << "kappa value: " << kappa_(T, p) << endl;
-    return kappa_(T, p);
+    return kappa_(Tt, p);
 }
 
 
 template<class Thermo>
-inline Foam::scalar Foam::tabularTransport<Thermo>::alphah
+inline Foam::scalar Foam::tabularTransport<Thermo>::kappave
 (
-    const scalar p,
-    const scalar T
+    const scalar p, const scalar Tt, const scalar Tve
 ) const
 {
-    return kappa(p, T) / this->Cp(p, T);
+    // No vib-electronic mode for equilibrium chemistry
+    return 0;
+}
+
+
+template<class Thermo>
+inline Foam::scalar Foam::tabularTransport<Thermo>::alphatr
+(
+    const scalar p, const scalar Tt
+) const
+{
+    if (this->Cv_t(p, Tt) != 0.0)
+    {
+        //Info << "kappatr(p, Tt): " << kappatr(p, Tt) << endl;
+        //Info << "this->Cv_t(p, Tt): " << this->Cv_t(p, Tt) << endl;
+        return kappatr(p, Tt)/this->Cv_t(p, Tt);
+    }
+    else
+    {
+        return 0.0;
+    } 
+}
+
+
+template<class Thermo>
+inline Foam::scalar Foam::tabularTransport<Thermo>::alphave
+(
+    const scalar p, const scalar Tt, const scalar Tve
+) const
+{
+    // No vib-electronic mode for equilibrium chemistry
+    return 0.0;
 }
 
 
@@ -155,14 +183,14 @@ inline void Foam::tabularTransport<Thermo>::operator+=
     const tabularTransport<Thermo>& pt
 )
 {
-    scalar Y1 = this->Y();
+    scalar Y1 = this->nMoles();
 
     Thermo::operator+=(pt);
 
-    if (mag(this->Y()) > SMALL)
+    if (mag(this->nMoles()) > SMALL)
     {
-	Y1 /= this->Y();
-	scalar Y2 = pt.Y()/this->Y();
+	Y1 /= this->nMoles();
+	scalar Y2 = pt.nMoles()/this->nMoles();
 
 	mu_ = Y1*mu_ + Y2*pt.mu_;
 	kappa_ = Y1*kappa_ + Y2*pt.kappa_;
@@ -194,7 +222,7 @@ inline Foam::tabularTransport<Thermo> Foam::operator+
         static_cast<const Thermo&>(pt1) + static_cast<const Thermo&>(pt2)
     );
 
-    if (mag(t.Y()) < SMALL)
+    if (mag(t.nMoles()) < SMALL)
     {
         return tabularTransport<Thermo>
         (
@@ -206,8 +234,8 @@ inline Foam::tabularTransport<Thermo> Foam::operator+
     }
     else
     {
-        scalar Y1 = pt1.Y()/t.Y();
-        scalar Y2 = pt2.Y()/t.Y();
+        scalar Y1 = pt1.nMoles()/t.nMoles();
+        scalar Y2 = pt2.nMoles()/t.nMoles();
 
         return tabularTransport<Thermo>
         (

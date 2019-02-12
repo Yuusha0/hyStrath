@@ -27,6 +27,7 @@ Class
 
 Description
     Transport package using tabulated values for \c mu and \c kappa.
+    Modified version for hy2Foam
 
 Note
     - Dynamic viscosity polynomial coefficients evaluate to an expression in
@@ -149,16 +150,29 @@ public:
         }
 
         //- Dynamic viscosity [kg/ms]
-        inline scalar mu(const scalar p, const scalar T) const;
+        inline scalar mu(const scalar p, const scalar Tt) const;
 
-        //- Thermal conductivity [W/mK]
-        inline scalar kappa(const scalar p, const scalar T) const;
+        //- Thermal conductivity, trans-roatational mode [W/mK]
+        inline scalar kappatr(const scalar p, const scalar Tt) const;
 
-        //- Thermal diffusivity of enthalpy [kg/ms]
-        inline scalar alphah(const scalar p, const scalar T) const;
-
-        // Species diffusivity
-        //inline scalar D(const scalar p, const scalar T) const;
+        //- Thermal conductivity, vib-electronic mode [W/mK]
+        inline scalar kappave
+	(
+	    const scalar p,
+	    const scalar Tt,
+	    const scalar Tve
+	) const;
+        
+        //- Thermal diffusivity, trans-rotational mode [kg/ms]
+        inline scalar alphatr(const scalar p, const scalar Tt) const;
+        
+        //- Thermal diffusivity, vib-electronic mode [kg/ms]
+        inline scalar alphave
+	(
+	    const scalar p,
+	    const scalar Tt,
+	    const scalar Tve
+	) const;
 
         //- Write to Ostream
         void write(Ostream& os) const;

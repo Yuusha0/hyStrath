@@ -147,14 +147,15 @@ public:
             //- Return density [kg/m^3]
             inline scalar rho(scalar p, scalar T) const;
 
+            // DELETED FOR HYFOAM **********************************************
             //- Return enthalpy departure [J/kg]
-            inline scalar H(scalar p, scalar T) const;
+            // inline scalar H(scalar p, scalar T) const;
 
             //- Return Cp departure [J/(kg K]
-            inline scalar Cp(scalar p, scalar T) const;
+            // inline scalar Cp(scalar p, scalar T) const;
 
             //- Return entropy [J/(kg K)]
-            inline scalar S(const scalar p, const scalar T) const;
+            // inline scalar S(const scalar p, const scalar T) const;
 
             //- Return compressibility rho/p [s^2/m^2]
             inline scalar psi(scalar p, scalar T) const;
@@ -163,7 +164,7 @@ public:
             inline scalar Z(scalar p, scalar T) const;
 
             //- Return (cp - cv) [J/(kmol K]
-            inline scalar CpMCv(scalar p, scalar T) const;
+            inline scalar cpMcv(scalar p, scalar T) const;
 
 
         // IO
